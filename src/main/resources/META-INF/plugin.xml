@@ -1,18 +1,21 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.przemyslawswiderski.sdkimportplugin</id>
-    <name>sdk-import-plugin</name>
-    <vendor>przemyslawswiderski</vendor>
+
+    <id>com.pswidersk.sdkimportplugin</id>
+    <name>Sdk-Import</name>
+    <vendor>Przemyslaw Swiderski</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>PythonCore</depends>
+    <depends>org.jetbrains.plugins.yaml</depends>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
+    <resource-bundle>messages.SdkImportBundle</resource-bundle>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.przemyslawswiderski.sdkimportplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-    </extensions>
+    <actions>
+        <action id="com.pswidersk.sdkimportplugin.SdkImportAction"
+                class="com.pswidersk.sdkimportplugin.SdkImportAction">
+            <add-to-group group-id="PyPackagingMenu" anchor="last"/>
+        </action>
+    </actions>
 
-    <applicationListeners>
-        <listener class="com.github.przemyslawswiderski.sdkimportplugin.listeners.MyApplicationActivationListener" topic="com.intellij.openapi.application.ApplicationActivationListener"/>
-    </applicationListeners>
 </idea-plugin>

@@ -1,16 +1,19 @@
 [versions]
 # libraries
-annotations = "24.1.0"
+assertj = "3.25.3"
+junit = "5.10.2"
 
 # plugins
 kotlin = "1.9.23"
 changelog = "2.2.0"
-gradleIntelliJPlugin = "1.17.2"
+gradleIntelliJPlugin = "1.17.3"
 qodana = "2023.3.1"
 kover = "0.7.6"
 
 [libraries]
-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
+assertj = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
+jupiterApi = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
+jupiterEngine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
 
 [plugins]
 changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
