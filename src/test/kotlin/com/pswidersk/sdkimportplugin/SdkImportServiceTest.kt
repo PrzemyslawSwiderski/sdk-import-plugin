@@ -1,11 +1,16 @@
 package com.pswidersk.sdkimportplugin
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.intellij.facet.FacetManager
-import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.openapi.vfs.writeText
 import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.junit5.RunInEdt
 import com.intellij.testFramework.junit5.TestApplication
@@ -30,8 +35,24 @@ class SdkImportServiceTest {
 
     @BeforeEach
     fun setUp() {
+        val testSdkImportConfigFile = projectModel.baseProjectDir.newVirtualFile(".idea/sdk-import.yml")
+        runWriteAction {
+            testSdkImportConfigFile.writeText(
+                """
+import:
+  - type: PYTHON
+    path: P:\GITHUBREPOS\python-template-project\.gradle\python\Windows\Miniconda3-py312_24.1.2-0\envs\python-3.12.2\python.exe
+    module: sample-python-module
+            """.trimIndent()
+            )
+        }
+        val testSdkImportConfig = ObjectMapper(YAMLFactory())
+            .registerKotlinModule()
+            .readValue<SdkImportConfig>(testSdkImportConfigFile.toNioPath().toFile())
         projectModel.createModule("sample-python-module")
-        VfsRootAccess.allowRootAccess(project, SDK_PATH)
+        testSdkImportConfig.import.forEach {
+            VfsRootAccess.allowRootAccess(project, it.path)
+        }
         IndexingTestUtil.waitUntilIndexesAreReady(project)
     }
 
@@ -56,8 +77,10 @@ class SdkImportServiceTest {
         val pythonSdkName = project.name + " Python env"
         val tableSdk = sdkTable.findJdk(pythonSdkName)
 
-        WriteAction.run<Throwable> {
-            ProjectJdkTable.getInstance().removeJdk(tableSdk!!)
+        tableSdk?.let {
+            runWriteAction {
+                ProjectJdkTable.getInstance().removeJdk(it)
+            }
         }
     }
 

@@ -7,14 +7,13 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>PythonCore</depends>
-    <depends>org.jetbrains.plugins.yaml</depends>
 
     <resource-bundle>messages.SdkImportBundle</resource-bundle>
 
     <actions>
         <action id="com.pswidersk.sdkimportplugin.SdkImportAction"
                 class="com.pswidersk.sdkimportplugin.SdkImportAction">
-            <add-to-group group-id="PyPackagingMenu" anchor="last"/>
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
     </actions>
 

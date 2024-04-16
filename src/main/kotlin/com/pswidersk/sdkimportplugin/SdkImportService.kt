@@ -1,69 +1,73 @@
 package com.pswidersk.sdkimportplugin
 
-import com.intellij.facet.FacetManager
-import com.intellij.ide.plugins.PluginManagerCore
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.diagnostic.thisLogger
+import com.intellij.openapi.components.service
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.python.community.plugin.java.facet.JavaPythonFacetType
+import com.intellij.project.stateStore
 import com.jetbrains.python.sdk.PythonSdkType
-
-const val SDK_PATH =
-    "P:\\GITHUBREPOS\\python-template-project\\.gradle\\python\\Windows\\Miniconda3-py312_24.1.2-0\\envs\\python-3.12.2\\python.exe"
 
 @Service(Service.Level.PROJECT)
 class SdkImportService(private val project: Project) {
 
-    private val logger = thisLogger()
+    private val mapper = ObjectMapper(YAMLFactory()).registerKotlinModule()
+
+    private val facetImportService
+        get() = project.service<FacetImportService>()
+
+    private val moduleManager
+        get() = ModuleManager.getInstance(project)
 
     fun runImport() {
-        logger.debug("Handle before project loaded event")
-        val projectJdkTable = ProjectJdkTable.getInstance()
-        logger.debug("All SDK size:${projectJdkTable.allJdks.size}")
-
         ApplicationManager.getApplication().invokeAndWait {
-            logger.debug("Project SDK not configured")
-            val sdkHomePath =
-                SDK_PATH
-            val sdkHome = WriteAction.compute<VirtualFile, RuntimeException> {
-                LocalFileSystem.getInstance().refreshAndFindFileByPath(sdkHomePath)
-            }
-            val sdkTable = ProjectJdkTable.getInstance()
-            val pythonSdkName = project.name + " Python env"
-            val tableSdk = sdkTable.findJdk(pythonSdkName)
-            val sdk = if (tableSdk != null) tableSdk else {
-                val pythonSdk = SdkConfigurationUtil.setupSdk(
-                    emptyArray(), sdkHome, PythonSdkType.getInstance(), true, null, pythonSdkName
-                )!!
-                WriteAction.run<Throwable> {
-                    sdkTable.addJdk(pythonSdk)
-                }
-                pythonSdk
-            }
-            val pythonFacetType = JavaPythonFacetType.getInstance()
+            val sdkImportConfig = loadConfig()
 
-            ModuleManager.getInstance(project).modules.onEach { module ->
-                val facetManager = FacetManager.getInstance(module)
-                var facet = facetManager.getFacetByType(pythonFacetType.id)
-                if (facet == null) {
-                    WriteAction.run<Throwable> {
-                        val facetModel = facetManager.createModifiableModel()
-                        facet = facetManager.createFacet(pythonFacetType, "Python", null)
-                        facet!!.configuration.sdk = sdk
-                        facetModel.addFacet(facet)
-                        facetModel.commit()
+            sdkImportConfig.import.forEach { sdkConfig ->
+                when (sdkConfig.type) {
+                    SdkType.PYTHON -> {
+                        val sdkHome = WriteAction.compute<VirtualFile, RuntimeException> {
+                            LocalFileSystem.getInstance().refreshAndFindFileByPath(sdkConfig.path)
+                        }
+                        val sdkTable = ProjectJdkTable.getInstance()
+                        val pythonSdkName = sdkConfig.module + " Python env"
+                        val tableSdk = sdkTable.findJdk(pythonSdkName)
+                        val sdk = if (tableSdk != null) tableSdk else {
+                            val pythonSdk = SdkConfigurationUtil.setupSdk(
+                                emptyArray(), sdkHome, PythonSdkType.getInstance(), true, null, pythonSdkName
+                            )!!
+                            WriteAction.run<Throwable> {
+                                sdkTable.addJdk(pythonSdk)
+                            }
+                            pythonSdk
+                        }
+                        moduleManager.findModuleByName(sdkConfig.module)?.let {
+                            facetImportService.addFacet(it, sdk)
+                        }
                     }
-                } else {
-                    logger.warn("Python facet already assigned to module: ${module.name}")
                 }
             }
         }
     }
+
+    private fun loadConfig(): SdkImportConfig {
+        val dotIdeaDir = project.stateStore.directoryStorePath
+        dotIdeaDir?.let {
+            var sdkImportFile = dotIdeaDir.toFile().resolve("sdk-import.yml")
+            if (!sdkImportFile.exists()) sdkImportFile = dotIdeaDir.toFile().resolve("sdk-import.yaml")
+            if (sdkImportFile.exists()) return mapper.readValue(sdkImportFile)
+        }
+
+        return SdkImportConfig()
+    }
+
 }
