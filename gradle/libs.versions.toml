@@ -9,6 +9,7 @@ changelog = "2.2.0"
 gradleIntelliJPlugin = "1.17.3"
 qodana = "2023.3.1"
 kover = "0.7.6"
+pythonPlugin = "2.6.0"
 
 [libraries]
 assertj = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
@@ -21,3 +22,4 @@ gradleIntelliJPlugin = { id = "org.jetbrains.intellij", version.ref = "gradleInt
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 qodana = { id = "org.jetbrains.qodana", version.ref = "qodana" }
+pythonPlugin = { id = "com.pswidersk.python-plugin", version.ref = "pythonPlugin" }

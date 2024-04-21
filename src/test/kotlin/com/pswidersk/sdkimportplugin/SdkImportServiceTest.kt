@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import com.intellij.facet.FacetManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -15,12 +14,17 @@ import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.junit5.RunInEdt
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.rules.ProjectModelExtension
+import com.jetbrains.python.sdk.pythonSdk
 import com.jetbrains.python.statistics.modules
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import java.io.File
+
+private const val SDK_IMPORT_REF = ".idea/sdk-import.yml"
+private const val TEST_MODULE_NAME = "sample-python-module"
 
 @TestApplication
 @RunInEdt(writeIntent = true)
@@ -35,25 +39,7 @@ class SdkImportServiceTest {
 
     @BeforeEach
     fun setUp() {
-        val testSdkImportConfigFile = projectModel.baseProjectDir.newVirtualFile(".idea/sdk-import.yml")
-        runWriteAction {
-            testSdkImportConfigFile.writeText(
-                """
-import:
-  - type: PYTHON
-    path: P:\GITHUBREPOS\python-template-project\.gradle\python\Windows\Miniconda3-py312_24.1.2-0\envs\python-3.12.2\python.exe
-    module: sample-python-module
-            """.trimIndent()
-            )
-        }
-        val testSdkImportConfig = ObjectMapper(YAMLFactory())
-            .registerKotlinModule()
-            .readValue<SdkImportConfig>(testSdkImportConfigFile.toNioPath().toFile())
-        projectModel.createModule("sample-python-module")
-        testSdkImportConfig.import.forEach {
-            VfsRootAccess.allowRootAccess(project, it.path)
-        }
-        IndexingTestUtil.waitUntilIndexesAreReady(project)
+        mockPythonSdk()
     }
 
     @Test
@@ -68,21 +54,42 @@ import:
         // then
         val rootModule = project.modules[0]
         assertThat(ProjectJdkTable.getInstance().allJdks).hasSize(1)
-        assertThat(FacetManager.getInstance(rootModule).allFacets).hasSize(1)
+        assertThat(rootModule.pythonSdk?.name).startsWith("Python env: ")
     }
 
     @AfterEach
     fun tearDown() {
-        val sdkTable = ProjectJdkTable.getInstance()
-        val pythonSdkName = project.name + " Python env"
-        val tableSdk = sdkTable.findJdk(pythonSdkName)
+        clearSdks()
+    }
 
-        tableSdk?.let {
+    private fun mockPythonSdk() {
+        val projectDir = System.getProperty("PROJECT_DIR")
+        val testSdkImportConfigFile = File(projectDir).resolve(SDK_IMPORT_REF)
+        val testSdkImportConfig = ObjectMapper(YAMLFactory())
+            .registerKotlinModule()
+            .readValue<SdkImportConfig>(testSdkImportConfigFile)
+        VfsRootAccess.allowRootAccess(project, projectDir)
+
+        projectModel.createModule(TEST_MODULE_NAME)
+        runWriteAction {
+            projectModel.baseProjectDir.newVirtualFile(SDK_IMPORT_REF).writeText(
+                """
+    import:
+      - type: PYTHON
+        path: ${testSdkImportConfig.import.first().path}
+        module: $TEST_MODULE_NAME
+                """.trimIndent()
+            )
+        }
+    }
+
+    private fun clearSdks() {
+        val sdkTable = ProjectJdkTable.getInstance()
+        sdkTable.allJdks.forEach {
             runWriteAction {
                 ProjectJdkTable.getInstance().removeJdk(it)
             }
         }
     }
-
 }
 

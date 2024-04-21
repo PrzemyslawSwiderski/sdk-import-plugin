@@ -1,4 +1,4 @@
-# Sdk-Import Intellij Plugin
+# SDK-Import Intellij Plugin
 
 ![Build](https://github.com/PrzemyslawSwiderski/sdk-import-plugin/workflows/Build/badge.svg)
 [![Version](https://img.shields.io/jetbrains/plugin/v/com.pswidersk.sdkimportplugin.svg)](https://plugins.jetbrains.com/plugin/com.pswidersk.sdkimportplugin)
@@ -28,7 +28,7 @@ To keep everything working, do not remove `<!-- ... -->` sections.
 
 - Using the IDE built-in plugin system:
   
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "Sdk-Import"</kbd> >
+  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "SDK-Import"</kbd> >
   <kbd>Install</kbd>
   
 - Manually:

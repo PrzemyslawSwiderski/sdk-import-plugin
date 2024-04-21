@@ -1,6 +1,6 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
-# Sdk-Import Changelog
+# SDK-Import Changelog
 
 ## [Unreleased]
 ### Added

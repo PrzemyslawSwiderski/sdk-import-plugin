@@ -2,11 +2,11 @@
 <idea-plugin>
 
     <id>com.pswidersk.sdkimportplugin</id>
-    <name>Sdk-Import</name>
+    <name>SDK-Import</name>
     <vendor>Przemyslaw Swiderski</vendor>
 
     <depends>com.intellij.modules.platform</depends>
-    <depends>PythonCore</depends>
+    <depends optional="true" config-file="sdk-import-python.xml">com.intellij.modules.python</depends>
 
     <resource-bundle>messages.SdkImportBundle</resource-bundle>
 
@@ -17,4 +17,11 @@
         </action>
     </actions>
 
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="SDK-Import" displayType="BALLOON"/>
+    </extensions>
+
+    <extensionPoints>
+        <extensionPoint name="sdkProcessor" interface="com.pswidersk.sdkimportplugin.SdkProcessor" dynamic="true"/>
+    </extensionPoints>
 </idea-plugin>

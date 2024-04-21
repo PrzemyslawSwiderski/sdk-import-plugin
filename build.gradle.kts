@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.changelog) // Gradle Changelog Plugin
     alias(libs.plugins.qodana) // Gradle Qodana Plugin
     alias(libs.plugins.kover) // Gradle Kover Plugin
+    alias(libs.plugins.pythonPlugin) // Python Plugin (https://github.com/PrzemyslawSwiderski/python-gradle-plugin)
 }
 
 group = properties("pluginGroup").get()
@@ -40,7 +41,8 @@ intellij {
     type = properties("platformType")
 
     // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
-    plugins = properties("platformPlugins").map { it.split(',').map(String::trim).filter(String::isNotEmpty) }
+    val platformPlugins = if (type.get() == "PC") "pyCharmPlugins" else "intellijPlugins"
+    plugins = properties(platformPlugins).map { it.split(',').map(String::trim).filter(String::isNotEmpty) }
     downloadSources = true
 }
 
@@ -59,6 +61,12 @@ koverReport {
     }
 }
 
+pythonPlugin {
+    pythonVersion = "3.12.2"
+    condaInstaller = "Miniconda3"
+    condaVersion = "py312_24.1.2-0"
+}
+
 tasks {
     wrapper {
         gradleVersion = properties("gradleVersion").get()
@@ -66,6 +74,8 @@ tasks {
 
     test {
         useJUnitPlatform()
+        systemProperty("PROJECT_DIR", projectDir.path)
+        dependsOn(envSetup)
     }
 
     patchPluginXml {
