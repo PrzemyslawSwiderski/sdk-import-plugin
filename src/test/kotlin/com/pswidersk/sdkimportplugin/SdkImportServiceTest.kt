@@ -26,7 +26,7 @@ private const val SDK_IMPORT_REF = ".idea/sdk-import.yml"
 private const val TEST_MODULE_NAME = "sample-python-module"
 
 @TestApplication
-@RunInEdt(writeIntent = true)
+@RunInEdt
 class SdkImportServiceTest {
 
     @JvmField
