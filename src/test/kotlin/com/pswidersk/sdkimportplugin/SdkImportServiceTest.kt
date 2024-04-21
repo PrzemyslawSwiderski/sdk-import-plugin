@@ -26,7 +26,7 @@ private const val SDK_IMPORT_REF = ".idea/sdk-import.yml"
 private const val TEST_MODULE_NAME = "sample-python-module"
 
 @TestApplication
-@RunInEdt
+@RunInEdt(writeIntent = true)
 class SdkImportServiceTest {
 
     @JvmField
@@ -44,6 +44,7 @@ class SdkImportServiceTest {
 
     @BeforeEach
     fun setUp() {
+        projectModel.createModule(TEST_MODULE_NAME)
         mockPythonSdk()
     }
 
@@ -76,7 +77,6 @@ class SdkImportServiceTest {
 
     private fun mockPythonSdk() {
         VfsRootAccess.allowRootAccess(project, buildProjectDir)
-        projectModel.createModule(TEST_MODULE_NAME)
         runWriteAction {
             projectModel.baseProjectDir.newVirtualFile(SDK_IMPORT_REF).writeText(
                 """
