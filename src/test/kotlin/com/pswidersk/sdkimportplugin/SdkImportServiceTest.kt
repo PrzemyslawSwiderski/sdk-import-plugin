@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.openapi.vfs.writeText
-import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.junit5.RunInEdt
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.rules.ProjectModelExtension
@@ -27,7 +26,7 @@ private const val SDK_IMPORT_REF = ".idea/sdk-import.yml"
 private const val TEST_MODULE_NAME = "sample-python-module"
 
 @TestApplication
-@RunInEdt(writeIntent = true)
+@RunInEdt
 class SdkImportServiceTest {
 
     @JvmField
@@ -36,6 +35,12 @@ class SdkImportServiceTest {
 
     private val project: Project
         get() = projectModel.project
+
+    private val buildProjectDir: String
+        get() = System.getProperty("PROJECT_DIR")
+
+    private val pythonPath: String
+        get() = findPythonPath(buildProjectDir)
 
     @BeforeEach
     fun setUp() {
@@ -49,12 +54,11 @@ class SdkImportServiceTest {
 
         // when
         projectService.runImport()
-        IndexingTestUtil.waitUntilIndexesAreReady(project)
 
         // then
         val rootModule = project.modules[0]
         assertThat(ProjectJdkTable.getInstance().allJdks).hasSize(1)
-        assertThat(rootModule.pythonSdk?.name).startsWith("Python env: ")
+        assertThat(rootModule.pythonSdk?.name).isEqualTo("Python env: $pythonPath")
     }
 
     @AfterEach
@@ -62,21 +66,23 @@ class SdkImportServiceTest {
         clearSdks()
     }
 
-    private fun mockPythonSdk() {
-        val projectDir = System.getProperty("PROJECT_DIR")
-        val testSdkImportConfigFile = File(projectDir).resolve(SDK_IMPORT_REF)
+    private fun findPythonPath(buildProjectDir: String): String {
+        val testSdkImportConfigFile = File(buildProjectDir).resolve(SDK_IMPORT_REF)
         val testSdkImportConfig = ObjectMapper(YAMLFactory())
             .registerKotlinModule()
             .readValue<SdkImportConfig>(testSdkImportConfigFile)
-        VfsRootAccess.allowRootAccess(project, projectDir)
+        return testSdkImportConfig.import.first().path
+    }
 
+    private fun mockPythonSdk() {
+        VfsRootAccess.allowRootAccess(project, buildProjectDir)
         projectModel.createModule(TEST_MODULE_NAME)
         runWriteAction {
             projectModel.baseProjectDir.newVirtualFile(SDK_IMPORT_REF).writeText(
                 """
     import:
       - type: PYTHON
-        path: ${testSdkImportConfig.import.first().path}
+        path: $pythonPath
         module: $TEST_MODULE_NAME
                 """.trimIndent()
             )

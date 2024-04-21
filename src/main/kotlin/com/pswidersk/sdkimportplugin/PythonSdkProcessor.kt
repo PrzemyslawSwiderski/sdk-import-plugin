@@ -21,10 +21,8 @@ class PythonSdkProcessor : SdkProcessor {
     private val logger = thisLogger()
 
     override fun applySdk(project: Project, sdkConfig: SdkImportConfigEntry) {
-        when (sdkConfig.type) {
-            SdkType.PYTHON -> {
-                addPythonSdk(project, sdkConfig)
-            }
+        if (sdkConfig.type == SdkType.PYTHON) {
+            addPythonSdk(project, sdkConfig)
         }
     }
 
