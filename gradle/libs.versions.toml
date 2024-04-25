@@ -9,7 +9,7 @@ changelog = "2.2.0"
 gradleIntelliJPlugin = "1.17.3"
 qodana = "2023.3.2"
 kover = "0.7.6"
-pythonPlugin = "2.6.0"
+pythonPlugin = "2.6.1"
 
 [libraries]
 assertj = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
