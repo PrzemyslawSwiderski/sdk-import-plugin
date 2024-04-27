@@ -1,9 +1,5 @@
 package com.pswidersk.sdkimportplugin
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -20,6 +16,8 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.yaml.snakeyaml.Yaml
+import org.yaml.snakeyaml.constructor.Constructor
 import java.io.File
 
 private const val SDK_IMPORT_REF = ".idea/sdk-import.yml"
@@ -69,9 +67,8 @@ class SdkImportServiceTest {
 
     private fun findPythonPath(buildProjectDir: String): String {
         val testSdkImportConfigFile = File(buildProjectDir).resolve(SDK_IMPORT_REF)
-        val testSdkImportConfig = ObjectMapper(YAMLFactory())
-            .registerKotlinModule()
-            .readValue<SdkImportConfig>(testSdkImportConfigFile)
+        val testSdkImportConfig: SdkImportConfig = Yaml(Constructor(SdkImportConfig::class.java))
+            .load(testSdkImportConfigFile.inputStream())
         return testSdkImportConfig.import.first().path
     }
 

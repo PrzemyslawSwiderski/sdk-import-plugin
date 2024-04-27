@@ -1,0 +1,5 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.pswidersk.sdkimportplugin">
+        <sdkProcessor implementation="com.pswidersk.sdkimportplugin.JavaSdkProcessor"/>
+    </extensions>
+</idea-plugin>

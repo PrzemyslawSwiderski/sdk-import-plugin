@@ -6,9 +6,8 @@
 
 <!-- Plugin description -->
 
-## Description
-
-Plugin to add support for the project level SDK definitions.
+Plugin to add support for specifying global SDK definitions at the project level.
+It loads YML config file to define language SDK for the specific module or project.
 
 ### Configuration file
 
@@ -21,14 +20,18 @@ import:
   - module: "python-data-science-samples"
     path: "C:/PYTHON/Miniconda3-py312_24.1.2-0/envs/python-3.12.2/python.exe"
     type: "PYTHON"
-  - module: "jupyter-notebook"
+  - module: "python-data-science-samples.jupyter-notebook"
     path: "C:/PYTHON/Miniconda3-py312_24.1.2-0/envs/python-3.9.1/python.exe"
     type: "PYTHON"
+  - module: "python-data-science-samples.java-samples"
+    path: "C:\\JAVA\\.gradle\\jdks\\adoptium-18-x64-hotspot-windows"
+    type: "JAVA"
 ```
 
 Where:
 
-* `module` should match the Intellij's module name,
+* `module` should match the Intellij's module name. Nested modules are separated with `.`. For the module name matching
+  project name SDK will be also added to the Project,
 * `path` is the location of SDK on files system,
 * `type` should be one of the supported SDKs enumerate values,
 
@@ -43,12 +46,13 @@ After Intellij will load the SDK and index the files, code autocompletion should
 The Plugin supports the following SDKs:
 
 * Python (`PYTHON` import type)
+* Java (`JAVA` import type)
 
 ### Python Support
 
 This plugin can cooperate with [**Python Gradle Plugin**](https://github.com/PrzemyslawSwiderski/python-gradle-plugin)
 to
-make working with multi-module projects easier.
+make working with multimodule projects easier.
 
 <!-- Plugin description end -->
 
