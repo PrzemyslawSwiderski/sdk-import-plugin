@@ -12,7 +12,6 @@ on:
 
 jobs:
   post-release-updates:
-    name: Publish Plugin
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -43,11 +42,13 @@ jobs:
       # Export current version
       - name: Export Current Version
         id: currentVersion
-        run: ./gradlew currentVersion -Doutput=$GITHUB_OUTPUT
+        run: grep 'pluginVersion' gradle.properties >> $GITHUB_OUTPUT
 
       # Update Plugin Version to new one
       - name: Update Version
-        run: ./gradlew updateVersion -DnewVersion=${{ github.event.inputs.nextVersion }}
+        run: |
+          NEXT_VERSION="${{ github.event.inputs.nextVersion }}"
+          sed -i 's/pluginVersion.*/pluginVersion = $NEXT_VERSION/g' gradle.properties
 
       # Create a pull request
       - name: Create Pull Request
