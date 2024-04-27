@@ -3,5 +3,8 @@
 # SDK-Import Changelog
 
 ## [Unreleased]
+
 ### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+
+- Java SDK definition support,
+- Using Snake YAML instead of Jackson for the sake of backward compatibility.

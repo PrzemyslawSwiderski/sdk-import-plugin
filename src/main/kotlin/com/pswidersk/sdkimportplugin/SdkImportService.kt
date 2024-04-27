@@ -1,9 +1,5 @@
 package com.pswidersk.sdkimportplugin
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
@@ -14,15 +10,28 @@ import com.intellij.project.stateStore
 @Service(Service.Level.PROJECT)
 class SdkImportService(private val project: Project) {
 
-    private val mapper = ObjectMapper(YAMLFactory()).registerKotlinModule()
-
     fun runImport() {
         ApplicationManager.getApplication().invokeAndWait {
             val sdkImportConfig = loadConfig()
 
             sdkImportConfig.import.forEach { sdkConfig ->
-                SdkProcessor.EP_NAME.extensionList.forEach { it.applySdk(project, sdkConfig) }
+                SdkProcessor.EP_NAME.extensionList.forEach {
+                    tryToApply(it, sdkConfig)
+                }
             }
+        }
+    }
+
+    private fun tryToApply(
+        processor: SdkProcessor,
+        sdkConfig: SdkImportConfigEntry
+    ) {
+        try {
+            processor.applySdk(project, sdkConfig)
+        } catch (exception: Exception) {
+            val exceptionMessage = exception.message ?: "N/A"
+            val msg = SdkImportBundle.message("notification.exception.content", exceptionMessage)
+            notifyAboutException(msg)
         }
     }
 
@@ -31,7 +40,7 @@ class SdkImportService(private val project: Project) {
         dotIdeaDir?.let {
             var sdkImportFile = dotIdeaDir.toFile().resolve("sdk-import.yml")
             if (!sdkImportFile.exists()) sdkImportFile = dotIdeaDir.toFile().resolve("sdk-import.yaml")
-            if (sdkImportFile.exists()) return mapper.readValue(sdkImportFile)
+            if (sdkImportFile.exists()) return sdkImportFile.loadAsYamlImportConfig()
         }
         notifyAboutMissingConfig()
         return SdkImportConfig()
@@ -46,4 +55,12 @@ class SdkImportService(private val project: Project) {
         ).notify(project)
     }
 
+    private fun notifyAboutException(msg: String) {
+        Notification(
+            NOTIFICATION_GROUP,
+            SdkImportBundle.message("notification.exception.title"),
+            msg,
+            NotificationType.ERROR
+        ).notify(project)
+    }
 }

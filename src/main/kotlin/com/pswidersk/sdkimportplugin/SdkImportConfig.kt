@@ -1,15 +1,15 @@
 package com.pswidersk.sdkimportplugin
 
-data class SdkImportConfig(
-    val import: List<SdkImportConfigEntry> = emptyList()
-)
+class SdkImportConfig {
+    lateinit var import: List<SdkImportConfigEntry>
+}
 
-data class SdkImportConfigEntry(
-    val type: SdkType,
-    val path: String,
-    val module: String,
-)
+class SdkImportConfigEntry {
+    lateinit var type: SdkType
+    lateinit var path: String
+    lateinit var module: String
+}
 
 enum class SdkType {
-    PYTHON
+    PYTHON, JAVA
 }

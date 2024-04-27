@@ -1,9 +1,5 @@
 package com.pswidersk.sdkimportplugin
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
@@ -69,9 +65,7 @@ class SdkImportServiceTest {
 
     private fun findPythonPath(buildProjectDir: String): String {
         val testSdkImportConfigFile = File(buildProjectDir).resolve(SDK_IMPORT_REF)
-        val testSdkImportConfig = ObjectMapper(YAMLFactory())
-            .registerKotlinModule()
-            .readValue<SdkImportConfig>(testSdkImportConfigFile)
+        val testSdkImportConfig = testSdkImportConfigFile.loadAsYamlImportConfig()
         return testSdkImportConfig.import.first().path
     }
 
