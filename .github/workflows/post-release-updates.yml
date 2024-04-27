@@ -48,7 +48,7 @@ jobs:
       - name: Update Version
         run: |
           NEXT_VERSION="${{ github.event.inputs.nextVersion }}"
-          sed -i 's/pluginVersion.*/pluginVersion = $NEXT_VERSION/g' gradle.properties
+          sed -i "s/pluginVersion.*/pluginVersion = $NEXT_VERSION/g" gradle.properties
 
       # Create a pull request
       - name: Create Pull Request
