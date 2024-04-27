@@ -74,6 +74,8 @@ tasks {
 
     test {
         useJUnitPlatform()
+        // Creating `.idea` directory so that `saveSdkImportConfig` task will be executed
+        file(".idea").mkdir()
         systemProperty("PROJECT_DIR", projectDir.path)
         dependsOn(envSetup)
     }
