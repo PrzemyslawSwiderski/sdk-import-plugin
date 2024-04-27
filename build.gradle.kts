@@ -138,4 +138,25 @@ tasks {
                 it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" })
         }
     }
+
+    create("updateVersion") {
+        doFirst {
+            val file = File("gradle.properties")
+            val lines = file.readLines().map { line ->
+                if (line.startsWith("pluginVersion"))
+                    return@map "pluginVersion = ${System.getProperty("newVersion")}\n"
+                else
+                    return@map line + '\n'
+            }
+            file.writeText(lines.joinToString(""))
+        }
+    }
+
+    create("currentVersion") {
+        doFirst {
+            val currentVersion = File("gradle.properties").readLines()
+                .first { it.startsWith("pluginVersion") }
+            File(System.getProperty("output")).writeText(currentVersion)
+        }
+    }
 }
