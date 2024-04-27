@@ -42,7 +42,7 @@ jobs:
       # Export current version
       - name: Export Current Version
         id: currentVersion
-        run: grep 'pluginVersion' gradle.properties >> $GITHUB_OUTPUT
+        run: grep 'pluginVersion' gradle.properties | tr -d '[:blank:]' >> $GITHUB_OUTPUT
 
       # Update Plugin Version to new one
       - name: Update Version
