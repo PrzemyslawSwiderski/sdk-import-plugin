@@ -47,5 +47,5 @@ fun SdkImportConfigEntry.loadSdkFile(): VirtualFile {
         message("validation.missingSdkFile", path)
     }
 
-    return sdkHome;
+    return sdkHome
 }
