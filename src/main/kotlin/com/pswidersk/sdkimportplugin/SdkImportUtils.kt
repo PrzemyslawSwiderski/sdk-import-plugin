@@ -9,6 +9,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.pswidersk.sdkimportplugin.SdkImportBundle.message
+import org.yaml.snakeyaml.LoaderOptions
+import org.yaml.snakeyaml.Yaml
+import org.yaml.snakeyaml.constructor.Constructor
+import java.io.File
 import java.util.function.Consumer
 
 const val NOTIFICATION_GROUP = "SDK-Import"
@@ -49,3 +53,7 @@ fun SdkImportConfigEntry.loadSdkFile(): VirtualFile {
 
     return sdkHome
 }
+
+fun File.loadAsYamlImportConfig(): SdkImportConfig =
+    Yaml(Constructor(SdkImportConfig::class.java, LoaderOptions()))
+        .load(this.inputStream())

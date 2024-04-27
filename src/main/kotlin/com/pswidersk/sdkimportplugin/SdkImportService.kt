@@ -6,9 +6,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.project.Project
 import com.intellij.project.stateStore
-import org.yaml.snakeyaml.Yaml
-import org.yaml.snakeyaml.constructor.Constructor
-import java.io.File
 
 @Service(Service.Level.PROJECT)
 class SdkImportService(private val project: Project) {
@@ -43,14 +40,11 @@ class SdkImportService(private val project: Project) {
         dotIdeaDir?.let {
             var sdkImportFile = dotIdeaDir.toFile().resolve("sdk-import.yml")
             if (!sdkImportFile.exists()) sdkImportFile = dotIdeaDir.toFile().resolve("sdk-import.yaml")
-            if (sdkImportFile.exists()) return parseConfig(sdkImportFile)
+            if (sdkImportFile.exists()) return sdkImportFile.loadAsYamlImportConfig()
         }
         notifyAboutMissingConfig()
         return SdkImportConfig()
     }
-
-    private fun parseConfig(sdkImportFile: File): SdkImportConfig = Yaml(Constructor(SdkImportConfig::class.java))
-        .load(sdkImportFile.inputStream())
 
     private fun notifyAboutMissingConfig() {
         Notification(
