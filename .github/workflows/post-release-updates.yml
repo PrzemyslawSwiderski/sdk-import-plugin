@@ -50,7 +50,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          VERSION="${{ steps.currentVersion.outputs.pluginVersion }}"
+          VERSION="${{ inputs.release-version }}"
           BRANCH="post-release-update-$VERSION"
           LABEL="post release update"
           
