@@ -238,6 +238,29 @@ jobs:
       # Check out current repository
       - name: Fetch Sources
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Find the next semantic version based on commits
+      # https://github.com/thenativeweb/get-next-version?tab=readme-ov-file#using-commit-messages
+      - name: Get next version
+        id: get_next_version
+        uses: thenativeweb/get-next-version@2.6.2
+
+      # Setup Gradle
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      # Set environment variables
+      - name: Export Changelog
+        id: changelog
+        shell: bash
+        run: |
+          CHANGELOG="$(./gradlew getChangelog --unreleased --no-header --console=plain -q)"
+
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       # Remove old release drafts by using the curl request for the available releases with a draft flag
       - name: Remove Old Release Drafts
@@ -253,10 +276,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create "v${{ needs.build.outputs.version }}" \
+          gh release create "${{ steps.get_next_version.outputs.version }}" \
             --draft \
-            --title "v${{ needs.build.outputs.version }}" \
+            --title "${{ steps.get_next_version.outputs.version }}" \
             --notes "$(cat << 'EOM'
-          ${{ needs.build.outputs.changelog }}
+          ${{ steps.changelog.outputs.changelog }}
           EOM
           )"

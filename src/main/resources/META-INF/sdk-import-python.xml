@@ -2,4 +2,10 @@
     <extensions defaultExtensionNs="com.pswidersk.sdkimportplugin">
         <sdkProcessor implementation="com.pswidersk.sdkimportplugin.PythonSdkProcessor"/>
     </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <moduleBuilder builderClass="com.pswidersk.sdkimportplugin.python.GradleNewProjectWizard$Builder"/>
+        <fileTemplateGroup implementation="com.pswidersk.sdkimportplugin.python.GradleTemplateGroup"/>
+    </extensions>
+
 </idea-plugin>
