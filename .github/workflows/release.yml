@@ -51,3 +51,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload ${{ github.event.release.tag_name }} ./build/distributions/*
+
+  post-release-updates:
+    name: Post Release Updates
+    needs: [ release ]
+    uses: ./.github/workflows/post-release-updates.yml
+    with:
+      release-version: ${{ github.event.release.tag_name }}

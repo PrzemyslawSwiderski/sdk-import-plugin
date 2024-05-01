@@ -1,7 +1,5 @@
 package com.pswidersk.sdkimportplugin
 
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
@@ -15,7 +13,7 @@ import org.yaml.snakeyaml.constructor.Constructor
 import java.io.File
 import java.util.function.Consumer
 
-const val NOTIFICATION_GROUP = "SDK-Import"
+const val PLUGIN_NAME = "SDK-Import"
 
 fun withWriteAction(action: Runnable) {
     WriteAction.run<Throwable> {
@@ -26,21 +24,11 @@ fun withWriteAction(action: Runnable) {
 fun Project.withModule(moduleName: String, moduleConsumer: Consumer<Module>) {
     val module = ModuleManager.getInstance(this).findModuleByName(moduleName)
     if (module == null) {
-        notifyAboutMissingModule(this, moduleName)
+        missingModuleNotif(this, moduleName)
     } else {
         moduleConsumer.accept(module)
     }
 }
-
-fun notifyAboutMissingModule(project: Project, moduleName: String) {
-    Notification(
-        NOTIFICATION_GROUP,
-        message("notification.missingModule.title"),
-        message("notification.missingModule.content", moduleName),
-        NotificationType.WARNING
-    ).notify(project)
-}
-
 
 fun SdkImportConfigEntry.loadSdkFile(): VirtualFile {
     val sdkHome = WriteAction.compute<VirtualFile, RuntimeException> {
@@ -57,3 +45,11 @@ fun SdkImportConfigEntry.loadSdkFile(): VirtualFile {
 fun File.loadAsYamlImportConfig(): SdkImportConfig =
     Yaml(Constructor(SdkImportConfig::class.java, LoaderOptions()))
         .load(this.inputStream())
+
+fun execSafe(project: Project, execution: () -> Unit) {
+    try {
+        return execution()
+    } catch (exception: Exception) {
+        errorNotif(project, exception)
+    }
+}

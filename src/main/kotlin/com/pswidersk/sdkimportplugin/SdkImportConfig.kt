@@ -1,15 +1,14 @@
 package com.pswidersk.sdkimportplugin
 
 class SdkImportConfig {
-    lateinit var import: List<SdkImportConfigEntry>
+    var import: MutableList<SdkImportConfigEntry> = mutableListOf()
 }
 
 class SdkImportConfigEntry {
-    lateinit var type: SdkType
-    lateinit var path: String
-    lateinit var module: String
+    var type: String = ""
+    var path: String = ""
+    var module: String = ""
 }
 
-enum class SdkType {
-    PYTHON, JAVA
-}
+const val PYTHON_SDK_TYPE = "PYTHON"
+const val JAVA_SDK_TYPE = "JAVA"

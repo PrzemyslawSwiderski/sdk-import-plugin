@@ -54,6 +54,13 @@ This plugin can cooperate with [**Python Gradle Plugin**](https://github.com/Prz
 to
 make working with multimodule projects easier.
 
+### Gradle Python project generation
+
+It is possible to generate the new Gradle Python project with this plugin.
+
+New Project Generator should be available in the "New Project" wizard window.
+It allows bootstrapping a simple Python project.
+
 <!-- Plugin description end -->
 
 ## Installation
