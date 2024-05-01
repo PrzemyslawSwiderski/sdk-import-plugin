@@ -7,12 +7,6 @@ on:
   release:
     types: [ prereleased, released ]
 
-inputs:
-  release-version:
-    description: 'Release version (must match existing tag)'
-    required: false
-    default: ${{ github.event.release.tag_name }}
-
 jobs:
 
   # Prepare and publish the plugin to JetBrains Marketplace repository
@@ -28,7 +22,7 @@ jobs:
       - name: Fetch Sources
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.release-version }}
+          ref: ${{ github.event.release.tag_name }}
 
       # Set up Java environment for the next steps
       - name: Setup Java
@@ -46,7 +40,7 @@ jobs:
       # Update Plugin Version to new one
       - name: Update Version
         run: |
-          VERSION="${{ inputs.release-version }}"
+          VERSION="${{ github.event.release.tag_name }}"
           sed -i "s/pluginVersion.*/pluginVersion=$VERSION/g" gradle.properties
 
       # Publish the plugin to JetBrains Marketplace
@@ -62,11 +56,11 @@ jobs:
       - name: Upload Release Asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload ${{ inputs.release-version }} ./build/distributions/*
+        run: gh release upload ${{ github.event.release.tag_name }} ./build/distributions/*
 
   post-release-updates:
     name: Post Release Updates
     needs: [ release ]
     uses: ./.github/workflows/post-release-updates.yml
     with:
-      release-version: ${{ inputs.release-version }}
+      release-version: ${{ github.event.release.tag_name }}
