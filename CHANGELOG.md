@@ -6,6 +6,14 @@
 
 ### Added
 
+### Changed
+
+### Removed
+
+## [1.1.0] - 2024-05-01
+
+### Added
+
 - Gradle Python new project generation wizard.
 
 ### Changed
@@ -19,6 +27,6 @@
 - Java SDK definition support,
 - Using Snake YAML instead of Jackson for the sake of backward compatibility.
 
-[Unreleased]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.0.1...HEAD
-
+[Unreleased]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/commits/v1.0.1
