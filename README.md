@@ -1,8 +1,9 @@
-# SDK-Import Intellij Plugin
+# [SDK-Import Intellij Plugin](https://plugins.jetbrains.com/plugin/24223-sdk-import/)
 
 ![Build](https://github.com/PrzemyslawSwiderski/sdk-import-plugin/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/com.pswidersk.sdkimportplugin.svg)](https://plugins.jetbrains.com/plugin/com.pswidersk.sdkimportplugin)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/com.pswidersk.sdkimportplugin.svg)](https://plugins.jetbrains.com/plugin/com.pswidersk.sdkimportplugin)
+[![Version](https://img.shields.io/jetbrains/plugin/v/com.pswidersk.sdkimportplugin.svg)](https://plugins.jetbrains.com/plugin/24223-sdk-import/)
+[![Downloads](https://img.shields.io/jetbrains/plugin/d/com.pswidersk.sdkimportplugin.svg)](https://plugins.jetbrains.com/plugin/24223-sdk-import/)
+
 
 <!-- Plugin description -->
 
