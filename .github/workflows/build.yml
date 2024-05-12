@@ -256,6 +256,7 @@ jobs:
         id: changelog
         shell: bash
         run: |
+          ./gradlew projects # exec simple task not to include download statement in changelog
           CHANGELOG="$(./gradlew getChangelog --unreleased --no-header --console=plain -q)"
 
           echo "changelog<<EOF" >> $GITHUB_OUTPUT

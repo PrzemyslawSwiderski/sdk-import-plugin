@@ -4,11 +4,8 @@
 
 ## [Unreleased]
 
-### Added
-
 ### Changed
-
-### Removed
+- Template dependencies versions updated.
 
 ## [1.1.0] - 2024-05-01
 
