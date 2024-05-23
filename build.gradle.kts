@@ -1,3 +1,4 @@
+import kotlinx.kover.gradle.plugin.dsl.tasks.KoverXmlReport
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 
@@ -52,15 +53,6 @@ changelog {
     repositoryUrl = properties("pluginRepositoryUrl")
 }
 
-// Configure Gradle Kover Plugin - read more: https://github.com/Kotlin/kotlinx-kover#configuration
-koverReport {
-    defaults {
-        xml {
-            onCheck = true
-        }
-    }
-}
-
 pythonPlugin {
     pythonVersion = "3.12.2"
     condaInstaller = "Miniconda3"
@@ -78,6 +70,11 @@ tasks {
         file(".idea").mkdir()
         systemProperty("PROJECT_DIR", projectDir.path)
         dependsOn(envSetup)
+    }
+
+    check {
+        // Configure Gradle Kover Plugin - read more: https://github.com/Kotlin/kotlinx-kover#configuration
+        dependsOn(matching { it is KoverXmlReport })
     }
 
     patchPluginXml {
