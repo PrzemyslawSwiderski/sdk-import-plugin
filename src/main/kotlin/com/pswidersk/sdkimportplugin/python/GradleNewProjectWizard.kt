@@ -36,19 +36,19 @@ class GradleNewProjectWizard : GeneratorNewProjectWizard {
             addAssets(
                 GeneratorResourceFile(
                     relativePath = "gradle/wrapper/gradle-wrapper.jar",
-                    resource = javaClass.getResource("/pythonTemplateProject/gradle/wrapper/gradle-wrapper.jar.bin")!!
+                    resource = resource("/pythonTemplateProject/gradle/wrapper/gradle-wrapper.jar.bin")
                 ),
                 GeneratorResourceFile(
                     relativePath = "gradle/wrapper/gradle-wrapper.properties",
-                    resource = javaClass.getResource("/pythonTemplateProject/gradle/wrapper/gradle-wrapper.properties")!!
+                    resource = resource("/pythonTemplateProject/gradle/wrapper/gradle-wrapper.properties")
                 ),
                 GeneratorResourceFile(
                     relativePath = ".gitignore",
-                    resource = javaClass.getResource("/pythonTemplateProject/gradle.gitignore.txt")!!
+                    resource = resource("/pythonTemplateProject/gradle.gitignore.txt")
                 ),
                 GeneratorResourceFile(
                     relativePath = "build.gradle.kts",
-                    resource = javaClass.getResource("/pythonTemplateProject/build.gradle.kts")!!
+                    resource = resource("/pythonTemplateProject/build.gradle.kts")
                 ),
                 GeneratorResourceFile(
                     permissions = setOf(
@@ -57,26 +57,28 @@ class GradleNewProjectWizard : GeneratorNewProjectWizard {
                         PosixFilePermission.OTHERS_EXECUTE
                     ),
                     relativePath = "gradlew",
-                    resource = javaClass.getResource("/pythonTemplateProject/gradlew.bin")!!
+                    resource = resource("/pythonTemplateProject/gradlew.bin")
                 ),
                 GeneratorResourceFile(
                     relativePath = "gradlew.bat",
-                    resource = javaClass.getResource("/pythonTemplateProject/gradlew.bat.bin")!!
+                    resource = resource("/pythonTemplateProject/gradlew.bat.bin")
                 ),
                 GeneratorResourceFile(
                     relativePath = "README.md",
-                    resource = javaClass.getResource("/pythonTemplateProject/README.md")!!
+                    resource = resource("/pythonTemplateProject/README.md")
                 ),
                 GeneratorResourceFile(
                     relativePath = "requirements.txt",
-                    resource = javaClass.getResource("/pythonTemplateProject/requirements.txt")!!
+                    resource = resource("/pythonTemplateProject/requirements.txt")
                 ),
                 GeneratorResourceFile(
                     relativePath = "script.py",
-                    resource = javaClass.getResource("/pythonTemplateProject/script.py")!!
+                    resource = resource("/pythonTemplateProject/script.py")
                 ),
             )
         }
+
+        private fun resource(resourceClassPath: String) = javaClass.getResource(resourceClassPath)!!
     }
 
     class Builder : GeneratorNewProjectWizardBuilderAdapter(GradleNewProjectWizard()) {
