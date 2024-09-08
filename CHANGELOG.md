@@ -4,11 +4,9 @@
 
 ## [Unreleased]
 
-### Added
-
 ### Changed
 
-### Removed
+- Updates for the 242.* support.
 
 ## [1.1.1] - 2024-05-12
 

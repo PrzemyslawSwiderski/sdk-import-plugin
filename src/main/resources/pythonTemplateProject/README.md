@@ -1,22 +1,22 @@
 # Gradle Python Generated project
 
-## Installing Python
+## Installing Python and PIP dependencies
 
 Run:
 
 ```commandline
-./gradlew envSetup
+./gradlew condaInstall 
 ```
 
 or on Windows:
 
 ```commandline
-gradlew envSetup
+gradlew condaInstall
 ```
 
 ## Integrating with SDK-Import plugin
 
-After successfully executing `envSetup` task, in order to load the config file, developer has to choose **"Tools" -> "
+After successfully executing `condaInstall` task, in order to load the config file, developer has to choose **"Tools" -> "
 Reimport SDK"** action.
 
 After Intellij will load the SDK and index the files, code autocompletion should be enabled.

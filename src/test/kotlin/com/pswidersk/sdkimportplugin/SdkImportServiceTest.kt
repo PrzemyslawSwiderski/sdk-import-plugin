@@ -4,50 +4,48 @@ import com.intellij.notification.Notification
 import com.intellij.notification.impl.NotificationsManagerImpl
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.service
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.project.stateStore
 import com.intellij.testFramework.junit5.RunInEdt
 import com.intellij.testFramework.junit5.TestApplication
-import com.intellij.testFramework.rules.ProjectModelExtension
+import com.intellij.testFramework.junit5.fixture.moduleFixture
 import com.jetbrains.python.sdk.pythonSdk
-import com.jetbrains.python.statistics.modules
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.RegisterExtension
 import java.io.File
 
 private const val TEST_MODULE_NAME = "sample-python-module"
 
 @TestApplication
-@RunInEdt
+@RunInEdt(writeIntent = true)
 class SdkImportServiceTest {
 
-    @JvmField
-    @RegisterExtension
-    val projectModel: ProjectModelExtension = ProjectModelExtension()
+    private val projectModel = customProjectFixture()
+    private val project: Project
+        get() = projectModel.get()
+
+    private val moduleModel = projectModel.moduleFixture(TEST_MODULE_NAME)
+    private val module: Module
+        get() = moduleModel.get()
 
     private val ideaDir: File
-        get() = projectModel.baseProjectDir.root.resolve(".idea").also { it.mkdir() }
+        get() = project.stateStore.directoryStorePath!!.toFile().also { it.mkdir() }
 
     private val sdkImportFile: File
         get() = ideaDir.resolve("sdk-import.yml")
 
-    private val project: Project
-        get() = projectModel.project
-
-    private val buildProjectDir: String
+    private val pluginProjectDir: String
         get() = System.getProperty("PROJECT_DIR")
 
     private val pythonPath: String
-        get() = findPythonPath(buildProjectDir)
+        get() = findPythonPath(pluginProjectDir)
 
-    @BeforeEach
-    fun setUp() {
-        projectModel.createModule(TEST_MODULE_NAME)
-    }
+    private val jdkPath: String
+        get() = System.getProperty("JDK_PATH")
 
     @Test
     fun `new Python SDK is imported`() {
@@ -59,9 +57,23 @@ class SdkImportServiceTest {
         projectService.runImport()
 
         // then
-        val rootModule = project.modules[0]
         assertThat(ProjectJdkTable.getInstance().allJdks).hasSize(1)
-        assertThat(rootModule.pythonSdk?.name).isEqualTo("Python env: $pythonPath")
+        assertThat(module.pythonSdk?.name).isEqualTo("Python env: $pythonPath")
+    }
+
+    @Test
+    fun `new Java SDK is imported`() {
+        // given
+        mockJdk()
+        val projectService = project.service<SdkImportService>()
+
+        // when
+        projectService.runImport()
+
+        // then
+        val allJdks = ProjectJdkTable.getInstance().allJdks
+        assertThat(allJdks).hasSize(1)
+        assertThat(allJdks.first().name).isEqualTo("JDK: $jdkPath")
     }
 
     @Test
@@ -109,13 +121,27 @@ class SdkImportServiceTest {
     }
 
     private fun mockPythonSdk() {
-        VfsRootAccess.allowRootAccess(project, buildProjectDir)
+        VfsRootAccess.allowRootAccess(project, pluginProjectDir)
         runWriteAction {
             sdkImportFile.writeText(
                 """
                 import:
                   - type: PYTHON
                     path: $pythonPath
+                    module: $TEST_MODULE_NAME
+                """.trimIndent()
+            )
+        }
+    }
+
+    private fun mockJdk() {
+        VfsRootAccess.allowRootAccess(project, jdkPath)
+        runWriteAction {
+            sdkImportFile.writeText(
+                """
+                import:
+                  - type: JAVA
+                    path: $jdkPath
                     module: $TEST_MODULE_NAME
                 """.trimIndent()
             )

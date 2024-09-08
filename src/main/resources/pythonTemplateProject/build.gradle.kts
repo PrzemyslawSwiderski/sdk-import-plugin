@@ -1,13 +1,13 @@
 import com.pswidersk.gradle.python.VenvTask
 
 plugins {
-    id("com.pswidersk.python-plugin") version "2.7.1"
+    id("com.pswidersk.python-plugin") version "2.7.3"
 }
 
 pythonPlugin {
-    pythonVersion = "3.12.2"
+    pythonVersion = "3.12.4"
     condaInstaller = "Miniconda3"
-    condaVersion = "py312_24.1.2-0"
+    condaVersion = "py312_24.5.0-0"
 }
 
 tasks {
@@ -19,7 +19,7 @@ tasks {
 
     val condaInstall by registering(VenvTask::class) {
         venvExec = "conda"
-        args = listOf("install", "--file", "requirements.txt")
+        args = listOf("install", "--file", "requirements.txt", "-y")
     }
 
     register<VenvTask>("runScript") {
