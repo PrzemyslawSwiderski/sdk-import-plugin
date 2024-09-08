@@ -8,15 +8,22 @@ plugins {
     alias(libs.plugins.kotlin) // Kotlin support
     alias(libs.plugins.intelliJPlatform) // Gradle IntelliJ Plugin
     alias(libs.plugins.changelog) // Gradle Changelog Plugin
-    alias(libs.plugins.qodana) // Gradle Qodana Plugin
-    alias(libs.plugins.kover) // Gradle Kover Plugin
     alias(libs.plugins.pythonPlugin) // Python Plugin (https://github.com/PrzemyslawSwiderski/python-gradle-plugin)
 }
 
 val javaVersion: String by project
+val pluginGroup: String by project
+val pluginVersion: String by project
+val platformType: String by project
+val platformVersion: String by project
+val platformBundledPlugins: String by project
+val platformPlugins: String by project
+val pluginRepositoryUrl: String by project
+val pluginSinceBuild: String by project
+val pluginUntilBuild: String by project
 
-group = providers.gradleProperty("pluginGroup").get()
-version = providers.gradleProperty("pluginVersion").get()
+group = pluginGroup
+version = pluginVersion
 
 // Set the JVM language level used to build the project.
 kotlin {
@@ -48,13 +55,13 @@ dependencies {
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
-        create(providers.gradleProperty("platformType"), providers.gradleProperty("platformVersion"))
+        create(platformType, platformVersion)
 
         // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
-        bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
+        bundledPlugins(platformBundledPlugins.split(','))
 
         // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
-        plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
+        plugins(platformPlugins.split(','))
 
         instrumentationTools()
         pluginVerifier()
@@ -67,7 +74,7 @@ dependencies {
 // Configure IntelliJ Platform Gradle Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-extension.html
 intellijPlatform {
     pluginConfiguration {
-        version = providers.gradleProperty("pluginVersion")
+        version = pluginVersion
 
         // Extract the <!-- Plugin description --> section from README.md and provide for the plugin's manifest
         description = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
@@ -84,20 +91,19 @@ intellijPlatform {
 
         val changelog = project.changelog // local variable for configuration cache compatibility
         // Get the latest available change notes from the changelog file
-        changeNotes = providers.gradleProperty("pluginVersion").map { pluginVersion ->
-            with(changelog) {
-                renderItem(
-                    (getOrNull(pluginVersion) ?: getUnreleased())
-                        .withHeader(false)
-                        .withEmptySections(false),
-                    Changelog.OutputType.HTML,
-                )
-            }
+        changeNotes = with(changelog) {
+            renderItem(
+                (getOrNull(pluginVersion) ?: getUnreleased())
+                    .withHeader(false)
+                    .withEmptySections(false),
+                Changelog.OutputType.HTML,
+            )
         }
 
+
         ideaVersion {
-            sinceBuild = providers.gradleProperty("pluginSinceBuild")
-            untilBuild = providers.gradleProperty("pluginUntilBuild")
+            sinceBuild = pluginSinceBuild
+            untilBuild = pluginUntilBuild
         }
     }
 
@@ -112,8 +118,7 @@ intellijPlatform {
         // The pluginVersion is based on the SemVer (https://semver.org) and supports pre-release labels, like 2.1.7-alpha.3
         // Specify pre-release label to publish the plugin in a custom Release Channel automatically. Read more:
         // https://plugins.jetbrains.com/docs/intellij/deployment.html#specifying-a-release-channel
-        channels = providers.gradleProperty("pluginVersion")
-            .map { listOf(it.substringAfter('-', "").substringBefore('.').ifEmpty { "default" }) }
+        channels = listOf(pluginVersion.substringAfter('-', "").substringBefore('.').ifEmpty { "default" })
     }
 
     pluginVerification {
@@ -126,7 +131,7 @@ intellijPlatform {
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
 changelog {
     groups = listOf("Added", "Changed", "Removed")
-    repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
+    repositoryUrl = pluginRepositoryUrl
 }
 
 pythonPlugin {
@@ -135,26 +140,10 @@ pythonPlugin {
     condaVersion = "py312_24.1.2-0"
 }
 
-// Configure Gradle Kover Plugin - read more: https://github.com/Kotlin/kotlinx-kover#configuration
-kover {
-    reports {
-        total {
-            xml {
-                onCheck = true
-            }
-        }
-    }
-    currentProject {
-        instrumentation {
-            // https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/1702
-            excludedClasses.add("org.apache.velocity.*")
-        }
-    }
-}
-
 tasks {
     wrapper {
-        gradleVersion = providers.gradleProperty("gradleVersion").get()
+        val gradleVersion: String by project
+        this.gradleVersion = gradleVersion
     }
 
     test {

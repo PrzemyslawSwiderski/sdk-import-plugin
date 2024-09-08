@@ -1,6 +1,6 @@
 .gradle
 build
+.kotlin
 # Intellij
 .idea
 .intellijPlatform
-.qodana
