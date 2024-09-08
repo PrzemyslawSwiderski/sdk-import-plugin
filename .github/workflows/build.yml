@@ -166,11 +166,13 @@ jobs:
           distribution: zulu
           java-version: 17
 
-      # Run Qodana inspections
-      - name: Qodana - Code Inspection
-        uses: JetBrains/qodana-action@v2024.1.9
-        with:
-          cache-default-branch-only: true
+# Uncomment once v2024.2.1 is available https://github.com/JetBrains/qodana-action/pull/370
+#
+#      # Run Qodana inspections
+#      - name: Qodana - Code Inspection
+#        uses: JetBrains/qodana-action@v2024.1.9
+#        with:
+#          cache-default-branch-only: true
 
   # Run plugin structure verification along with IntelliJ Plugin Verifier
   verify:
