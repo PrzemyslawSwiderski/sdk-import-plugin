@@ -135,6 +135,7 @@ class SdkImportServiceTest {
     }
 
     private fun mockJdk() {
+        VfsRootAccess.allowRootAccess(project, jdkPath)
         runWriteAction {
             sdkImportFile.writeText(
                 """
