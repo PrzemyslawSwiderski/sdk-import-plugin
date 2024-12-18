@@ -6,9 +6,12 @@
 
 ### Added
 
+- `2024.3` platform support.
+- Attached reimport action to Gradle refresh project (`RESOLVE_PROJECT` task).
+
 ### Changed
 
-### Removed
+- Updated tools and dependencies.
 
 ## [1.2.0] - 2024-09-08
 

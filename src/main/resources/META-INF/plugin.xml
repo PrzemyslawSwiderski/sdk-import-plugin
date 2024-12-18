@@ -20,6 +20,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="SDK-Import" displayType="BALLOON"/>
+        <externalSystemTaskNotificationListener implementation="com.pswidersk.sdkimportplugin.RefreshListener"/>
     </extensions>
 
     <extensionPoints>

@@ -138,6 +138,7 @@ pythonPlugin {
     pythonVersion = "3.12.2"
     condaInstaller = "Miniconda3"
     condaVersion = "py312_24.1.2-0"
+    useHomeDir = true
 }
 
 tasks {
@@ -151,7 +152,7 @@ tasks {
         // Creating `.idea` directory so that `saveSdkImportConfig` task will be executed
         file(".idea").mkdir()
         systemProperty("PROJECT_DIR", projectDir.path)
-        systemProperty("JDK_PATH", Jvm.current().getJavaHome())
+        systemProperty("JDK_PATH", Jvm.current().javaHome)
         dependsOn(envSetup)
     }
 
