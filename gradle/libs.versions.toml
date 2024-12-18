@@ -6,7 +6,7 @@ junit = "5.11.3" # https://mvnrepository.com/artifact/org.junit.jupiter/junit-ju
 # plugins
 kotlin = "2.1.0" # https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
 changelog = "2.2.1" # https://github.com/JetBrains/gradle-changelog-plugin
-intelliJPlatform = "2.1.0" # https://github.com/JetBrains/intellij-platform-gradle-plugin
+intelliJPlatform = "2.2.1" # https://github.com/JetBrains/intellij-platform-gradle-plugin
 pythonPlugin = "2.8.1" # https://github.com/PrzemyslawSwiderski/python-gradle-plugin
 
 [libraries]
