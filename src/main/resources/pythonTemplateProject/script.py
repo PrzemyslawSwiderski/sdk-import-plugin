@@ -1,6 +1,6 @@
 import pandas as pd
 
-version = {"major": 3, "minor": 12}
+version = {"major": 3, "minor": 13}
 print(f"Running on Python {version["major"]}.{version["minor"]}")
 
 # Create the DataFrame

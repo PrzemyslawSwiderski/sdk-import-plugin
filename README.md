@@ -38,7 +38,9 @@ Where:
 
 ### Import action
 
-In order to load the config file, developer has to choose **"Tools" -> "Reimport SDK"** action.
+In order to load the config file, developer has to either:
+* reimport/refresh Gradle project,
+* or manually choose **"Tools" -> "Reimport SDK"** action.
 
 After Intellij will load the SDK and index the files, code autocompletion should be enabled.
 
