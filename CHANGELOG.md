@@ -6,6 +6,14 @@
 
 ### Added
 
+### Changed
+
+### Removed
+
+## [1.3.0] - 2024-12-18
+
+### Added
+
 - `2024.3` platform support.
 - Attached reimport action to Gradle refresh project (`RESOLVE_PROJECT` task).
 
@@ -42,7 +50,8 @@
 - Java SDK definition support,
 - Using Snake YAML instead of Jackson for the sake of backward compatibility.
 
-[Unreleased]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.0.1...v1.1.0
