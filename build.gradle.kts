@@ -148,10 +148,6 @@ tasks {
     }
 
     test {
-        jvmArgs = listOf(
-            "-Didea.force.default.filesystem=true",
-            "-Dwsl.use.remote.agent.for.nio.filesystem=false"
-        )
         useJUnitPlatform()
         // Creating `.idea` directory so that `saveSdkImportConfig` task will be executed
         file(".idea").mkdir()
