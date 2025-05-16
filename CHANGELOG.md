@@ -4,11 +4,9 @@
 
 ## [Unreleased]
 
-### Added
-
 ### Changed
-
-### Removed
+- `2025.1` platform support.
+- Dependencies update.
 
 ## [1.3.0] - 2024-12-18
 

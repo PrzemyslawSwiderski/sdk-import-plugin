@@ -47,11 +47,11 @@ dependencies {
     testImplementation(libs.assertj)
     testImplementation(libs.jupiterApi)
 
-    testRuntimeOnly(libs.jupiterEngine)
+    testRuntimeOnly(libs.jupiterPlatform)
 
     // Temp workaround suggested in https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-faq.html#junit5-test-framework-refers-to-junit4
     // Can be removed when IJPL-159134 is fixed
-    testImplementation("org.junit.vintage:junit-vintage-engine:${libs.versions.junit}")
+    testRuntimeOnly("junit:junit:4.13.2")
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
@@ -141,10 +141,6 @@ pythonPlugin {
 }
 
 tasks {
-    wrapper {
-        val gradleVersion: String by project
-        this.gradleVersion = gradleVersion
-    }
 
     test {
         useJUnitPlatform()
