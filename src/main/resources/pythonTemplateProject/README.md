@@ -1,5 +1,7 @@
 # Gradle Python Generated project
 
+## This project uses [Gradle Python Plugin](https://github.com/PrzemyslawSwiderski/python-gradle-plugin)
+
 ## Installing Python and PIP dependencies
 
 Run:
@@ -16,7 +18,7 @@ gradlew condaInstall
 
 ## Integrating with SDK-Import plugin
 
-After successfully executing `condaInstall` task, in order to load the config file, developer has to choose **"Tools" -> "
+After successfully executing `condaInstall` task, to load the config file, developer has to choose **"Tools" -> "
 Reimport SDK"** action.
 
 After Intellij will load the SDK and index the files, code autocompletion should be enabled.

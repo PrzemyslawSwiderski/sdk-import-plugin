@@ -2,6 +2,7 @@ import org.gradle.internal.jvm.Jvm
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.tasks.PrepareSandboxTask
 
 plugins {
     id("java") // Java support
@@ -61,8 +62,7 @@ dependencies {
         bundledPlugins(platformBundledPlugins.split(','))
 
         // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
-        plugins(platformPlugins.split(','))
-
+        compatiblePlugins(platformPlugins.split(','))
         pluginVerifier()
         zipSigner()
         testFramework(TestFrameworkType.Platform)
@@ -155,4 +155,10 @@ tasks {
         dependsOn("patchChangelog")
     }
 
+    withType<PrepareSandboxTask>().configureEach {
+        disabledPlugins.addAll(
+            "com.intellij.swagger",
+            "org.jetbrains.plugins.kotlin.jupyter",
+        )
+    }
 }

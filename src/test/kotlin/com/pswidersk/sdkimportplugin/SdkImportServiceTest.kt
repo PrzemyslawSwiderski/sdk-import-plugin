@@ -49,7 +49,7 @@ class SdkImportServiceTest {
         get() = System.getProperty("JDK_PATH")
 
     @Disabled(
-        "Disabled for now because PythonCore:251.25410.129 plugin extension " +
+        "Disabled for now because PythonCore plugin extension " +
                 "is not being registered in tests correctly."
     )
     @Test
