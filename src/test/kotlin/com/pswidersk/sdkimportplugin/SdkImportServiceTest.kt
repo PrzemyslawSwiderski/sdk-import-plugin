@@ -15,6 +15,7 @@ import com.intellij.testFramework.junit5.fixture.moduleFixture
 import com.jetbrains.python.sdk.pythonSdk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -46,6 +47,11 @@ class SdkImportServiceTest {
 
     private val jdkPath: String
         get() = System.getProperty("JDK_PATH")
+
+    @BeforeEach
+    fun allowUsrBin() {
+        VfsRootAccess.allowRootAccess(project, "/usr/bin/") // Fix for the CI build
+    }
 
     @Test
     fun `new Python SDK is imported`() {
