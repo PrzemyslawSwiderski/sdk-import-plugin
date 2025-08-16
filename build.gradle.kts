@@ -137,7 +137,7 @@ pythonPlugin {
     pythonVersion = "3.12.2"
     condaInstaller = "Miniconda3"
     condaVersion = "py312_24.1.2-0"
-    useHomeDir = true
+    useHomeDir = false
 }
 
 tasks {
