@@ -15,7 +15,6 @@ import com.intellij.testFramework.junit5.fixture.moduleFixture
 import com.jetbrains.python.sdk.pythonSdk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -48,10 +47,6 @@ class SdkImportServiceTest {
     private val jdkPath: String
         get() = System.getProperty("JDK_PATH")
 
-    @Disabled(
-        "Disabled for now because PythonCore plugin extension " +
-                "is not being registered in tests correctly."
-    )
     @Test
     fun `new Python SDK is imported`() {
         // given

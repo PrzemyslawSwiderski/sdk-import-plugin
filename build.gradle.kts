@@ -66,6 +66,7 @@ dependencies {
         zipSigner()
         testFramework(TestFrameworkType.Platform)
         testFramework(TestFrameworkType.JUnit5)
+        testBundledPlugins("com.intellij.modules.json") // Python Plugin tests required dependency
     }
 }
 

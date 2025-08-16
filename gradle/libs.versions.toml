@@ -4,9 +4,9 @@ assertj = "3.27.3" # https://mvnrepository.com/artifact/org.assertj/assertj-core
 junit = "5.13.4" # https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
 
 # plugins
-kotlin = "2.2.0" # https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
+kotlin = "2.2.10" # https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
 changelog = "2.4.0" # https://github.com/JetBrains/gradle-changelog-plugin
-intelliJPlatform = "2.7.0" # https://github.com/JetBrains/intellij-platform-gradle-plugin
+intelliJPlatform = "2.7.2" # https://github.com/JetBrains/intellij-platform-gradle-plugin
 pythonPlugin = "2.9.0" # https://github.com/PrzemyslawSwiderski/python-gradle-plugin
 
 [libraries]
