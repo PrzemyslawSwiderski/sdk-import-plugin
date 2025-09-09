@@ -6,7 +6,7 @@ import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.readText
 import com.intellij.testFramework.junit5.RunInEdt
 import com.intellij.testFramework.junit5.TestApplication
-import com.pswidersk.sdkimportplugin.customProjectFixture
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 @RunInEdt(writeIntent = true)
 class GradleNewProjectWizardTest {
 
-    private val projectModel = customProjectFixture()
+    private val projectModel = projectFixture()
     private val project: Project
         get() = projectModel.get()
 

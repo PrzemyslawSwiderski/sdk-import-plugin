@@ -2,20 +2,22 @@ package com.pswidersk.sdkimportplugin
 
 import com.intellij.notification.Notification
 import com.intellij.notification.impl.NotificationsManagerImpl
+import com.intellij.openapi.application.Application
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.project.stateStore
+import com.intellij.testFramework.common.ThreadLeakTracker
 import com.intellij.testFramework.junit5.RunInEdt
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.moduleFixture
+import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.jetbrains.python.sdk.pythonSdk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -25,7 +27,7 @@ private const val TEST_MODULE_NAME = "sample-python-module"
 @RunInEdt(writeIntent = true)
 class SdkImportServiceTest {
 
-    private val projectModel = customProjectFixture()
+    private val projectModel = projectFixture()
     private val project: Project
         get() = projectModel.get()
 
@@ -48,9 +50,12 @@ class SdkImportServiceTest {
     private val jdkPath: String
         get() = System.getProperty("JDK_PATH")
 
-    @BeforeEach
-    fun allowUsrBin() {
-        VfsRootAccess.allowRootAccess(project, "/usr/bin/") // Fix for the CI build
+    private val app: Application
+        get() = ApplicationManager.getApplication()
+
+    @AfterEach
+    fun ignoreThreads() {
+        ThreadLeakTracker.longRunningThreadCreated(app, "SystemPropertyWatcher")
     }
 
     @Test
@@ -127,7 +132,6 @@ class SdkImportServiceTest {
     }
 
     private fun mockPythonSdk() {
-        VfsRootAccess.allowRootAccess(project, pluginProjectDir)
         runWriteAction {
             sdkImportFile.writeText(
                 """
@@ -141,7 +145,6 @@ class SdkImportServiceTest {
     }
 
     private fun mockJdk() {
-        VfsRootAccess.allowRootAccess(project, jdkPath)
         runWriteAction {
             sdkImportFile.writeText(
                 """
