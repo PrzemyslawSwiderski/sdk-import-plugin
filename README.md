@@ -27,6 +27,9 @@ import:
   - module: "python-data-science-samples.java-samples"
     path: "C:\\JAVA\\.gradle\\jdks\\adoptium-18-x64-hotspot-windows"
     type: "JAVA"
+  - module: "project-dir-based-sdk"
+    path: "$PROJECT_DIR$\\jdks\\adoptium-18-x64-hotspot-windows"
+    type: "JAVA"
 ```
 
 Where:
@@ -35,10 +38,12 @@ Where:
   project name SDK will be also added to the Project,
 * `path` is the location of SDK on files system,
 * `type` should be one of the supported SDKs enumerate values,
+* `$PROJECT_DIR$` is a main project base directory which will be translated into a full proper path,
 
 ### Import action
 
 In order to load the config file, developer has to either:
+
 * reimport/refresh Gradle project,
 * or manually choose **"Tools" -> "Reimport SDK"** action.
 

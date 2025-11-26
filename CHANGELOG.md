@@ -6,9 +6,7 @@
 
 ### Added
 
-### Changed
-
-### Removed
+- Added support for the "$PROJECT_DIR$" variable in `sdk-import.yml` file.
 
 ## [1.5.0] - 2025-08-09
 
@@ -66,10 +64,17 @@
 - Using Snake YAML instead of Jackson for the sake of backward compatibility.
 
 [Unreleased]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.5.0...HEAD
+
 [1.5.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.4.0...v1.5.0
+
 [1.4.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.3.0...v1.4.0
+
 [1.3.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.2.0...v1.3.0
+
 [1.2.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.1.1...v1.2.0
+
 [1.1.1]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.1.0...v1.1.1
+
 [1.1.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.0.1...v1.1.0
+
 [1.0.1]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/commits/v1.0.1

@@ -44,10 +44,7 @@ repositories {
 
 // Dependencies are managed with Gradle version catalog - read more: https://docs.gradle.org/current/userguide/platforms.html#sub:version-catalog
 dependencies {
-    testImplementation(libs.assertj)
-    testImplementation(libs.jupiterApi)
-
-    testRuntimeOnly(libs.jupiterPlatform)
+    testImplementation(libs.bundles.test)
 
     // Temp workaround suggested in https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-faq.html#junit5-test-framework-refers-to-junit4
     // Can be removed when IJPL-159134 is fixed
