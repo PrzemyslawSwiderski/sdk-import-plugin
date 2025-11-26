@@ -11,6 +11,7 @@ import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
 import java.io.File
+import java.io.File.separatorChar
 import java.util.function.Consumer
 
 const val PLUGIN_NAME = "SDK-Import"
@@ -30,13 +31,15 @@ fun Project.withModule(moduleName: String, moduleConsumer: Consumer<Module>) {
     }
 }
 
-fun SdkImportConfigEntry.loadSdkFile(): VirtualFile {
+fun SdkImportConfigEntry.loadSdkFile(project: Project): VirtualFile {
+    val projectBasePath = project.basePath?.trimEnd(separatorChar) ?: ""
+    val resolvedPath = path.replace($$"$PROJECT_DIR$", projectBasePath)
     val sdkHome = WriteAction.compute<VirtualFile, RuntimeException> {
-        LocalFileSystem.getInstance().refreshAndFindFileByPath(path)
+        LocalFileSystem.getInstance().refreshAndFindFileByPath(resolvedPath)
     }
 
     require(sdkHome != null && sdkHome.exists()) {
-        message("validation.missingSdkFile", path)
+        message("validation.missingSdkFile", resolvedPath)
     }
 
     return sdkHome

@@ -1,4 +1,4 @@
-package com.pswidersk.sdkimportplugin
+package com.pswidersk.sdkimportplugin.python
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
@@ -7,7 +7,7 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.pythonSdk
-
+import com.pswidersk.sdkimportplugin.*
 
 class PythonSdkProcessor : SdkProcessor {
 
@@ -18,7 +18,7 @@ class PythonSdkProcessor : SdkProcessor {
     }
 
     private fun addPythonSdk(project: Project, sdkConfig: SdkImportConfigEntry) {
-        val sdkHome = sdkConfig.loadSdkFile()
+        val sdkHome = sdkConfig.loadSdkFile(project)
         val sdkTable = ProjectJdkTable.getInstance()
         val pythonSdkName = "Python env: ${sdkConfig.path}"
         val tableSdk = sdkTable.findJdk(pythonSdkName)

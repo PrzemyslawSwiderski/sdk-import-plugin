@@ -1,14 +1,11 @@
 import com.pswidersk.gradle.python.VenvTask
 
 plugins {
-    id("com.pswidersk.python-plugin") version "2.9.0"
+    id("com.pswidersk.python-plugin") version "3.1.2"
 }
 
 pythonPlugin {
-    pythonVersion = "3.13.0"
-    condaInstaller = "Miniconda3"
-    condaVersion = "py312_24.9.2-0"
-    useHomeDir = true
+    // find possible options here: https://github.com/PrzemyslawSwiderski/python-gradle-plugin?tab=readme-ov-file#python-plugin-properties
 }
 
 tasks {

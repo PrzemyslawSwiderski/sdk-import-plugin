@@ -18,7 +18,7 @@ class JavaSdkProcessor : SdkProcessor {
     }
 
     private fun addJdk(project: Project, sdkConfig: SdkImportConfigEntry) {
-        val sdkHome = sdkConfig.loadSdkFile()
+        val sdkHome = sdkConfig.loadSdkFile(project)
         val sdkTable = ProjectJdkTable.getInstance()
         val jdkName = "JDK: ${sdkConfig.path}"
         val tableSdk = sdkTable.findJdk(jdkName)
