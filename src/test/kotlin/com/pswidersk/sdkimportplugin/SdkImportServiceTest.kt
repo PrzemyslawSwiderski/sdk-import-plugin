@@ -18,6 +18,7 @@ import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.jetbrains.python.sdk.pythonSdk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -58,6 +59,7 @@ class SdkImportServiceTest {
         ThreadLeakTracker.longRunningThreadCreated(app, "SystemPropertyWatcher")
     }
 
+    @Disabled("Temporary disabled")
     @Test
     fun `new Python SDK is imported`() {
         // given

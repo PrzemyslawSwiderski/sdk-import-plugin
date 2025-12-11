@@ -14,7 +14,6 @@ plugins {
 val javaVersion: String by project
 val pluginGroup: String by project
 val pluginVersion: String by project
-val platformType: String by project
 val platformVersion: String by project
 val platformBundledPlugins: String by project
 val platformPlugins: String by project
@@ -52,7 +51,7 @@ dependencies {
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
-        create(platformType, platformVersion)
+        intellijIdea(platformVersion)
 
         // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
         bundledPlugins(platformBundledPlugins.split(','))
@@ -131,10 +130,7 @@ changelog {
 }
 
 pythonPlugin {
-    pythonVersion = "3.12.2"
-    condaInstaller = "Miniconda3"
-    condaVersion = "py312_24.1.2-0"
-    useHomeDir = false
+    // use default settings
 }
 
 tasks {
