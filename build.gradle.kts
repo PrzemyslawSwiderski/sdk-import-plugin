@@ -152,4 +152,8 @@ tasks {
         dependsOn("patchChangelog")
     }
 
+    wrapper {
+        gradleVersion = "9.2.1"
+    }
+
 }
