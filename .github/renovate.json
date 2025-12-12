@@ -13,5 +13,5 @@
     ":automergeRequireAllStatusChecks"
   ],
   "minimumReleaseAge": "2 days",
-  "prCreation": "not-pending"
+  "prCreation": "immediate"
 }
