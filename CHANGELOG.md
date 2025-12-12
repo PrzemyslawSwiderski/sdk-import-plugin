@@ -4,11 +4,11 @@
 
 ## [Unreleased]
 
-### Added
-
 ### Changed
 
-### Removed
+- `2025.3` platform support.
+- Gradle wrapper update.
+- Plugin dependencies update.
 
 ## [1.6.0] - 2025-11-26
 
