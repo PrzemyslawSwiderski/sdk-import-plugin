@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Added
+
+### Changed
+
+### Removed
+
+## [1.7.0] - 2025-12-12
+
 ### Changed
 
 - `2025.3` platform support.
@@ -71,7 +79,8 @@
 - Java SDK definition support,
 - Using Snake YAML instead of Jackson for the sake of backward compatibility.
 
-[Unreleased]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.3.0...v1.4.0
