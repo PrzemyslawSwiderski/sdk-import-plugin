@@ -5,7 +5,7 @@ junit = "6.0.1" # https://mvnrepository.com/artifact/org.junit.jupiter/junit-jup
 mockito = "5.21.0"
 
 # plugins
-kotlin = "2.2.21" # https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
+kotlin = "2.3.0" # https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
 changelog = "2.5.0" # https://github.com/JetBrains/gradle-changelog-plugin
 intelliJPlatform = "2.10.5" # https://github.com/JetBrains/intellij-platform-gradle-plugin
 pythonPlugin = "3.1.4" # https://github.com/PrzemyslawSwiderski/python-gradle-plugin
