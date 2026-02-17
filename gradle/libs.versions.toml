@@ -1,7 +1,7 @@
 [versions]
 # libraries
 assertj = "3.27.7" # https://mvnrepository.com/artifact/org.assertj/assertj-core
-junit = "6.0.2" # https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+junit = "6.0.3" # https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
 mockito = "5.21.0"
 
 # plugins
