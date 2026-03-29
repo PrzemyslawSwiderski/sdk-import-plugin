@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.pythonSdk
 import com.pswidersk.sdkimportplugin.*
@@ -39,7 +40,7 @@ class PythonSdkProcessor : SdkProcessor {
 
     private fun setModuleSdk(module: Module, sdk: Sdk) {
         if (module.pythonSdk?.name != sdk.name) {
-            module.pythonSdk = sdk
+            ModuleRootModificationUtil.setModuleSdk(module, sdk)
             changedModulePythonSdkNotif(module, sdk.name)
         }
     }
