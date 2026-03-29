@@ -59,7 +59,7 @@ class SdkImportServiceTest {
         ThreadLeakTracker.longRunningThreadCreated(app, "SystemPropertyWatcher")
     }
 
-    @Disabled("Temporary disabled")
+    @Disabled("Disabled due to -> https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/2070")
     @Test
     fun `new Python SDK is imported`() {
         // given
