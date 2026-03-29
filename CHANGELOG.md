@@ -5,10 +5,7 @@
 ## [Unreleased]
 
 ### Added
-
-### Changed
-
-### Removed
+- `2026.1` platform support.
 
 ## [1.7.0] - 2025-12-12
 

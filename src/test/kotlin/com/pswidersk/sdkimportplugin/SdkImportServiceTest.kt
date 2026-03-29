@@ -2,15 +2,12 @@ package com.pswidersk.sdkimportplugin
 
 import com.intellij.notification.Notification
 import com.intellij.notification.impl.NotificationsManagerImpl
-import com.intellij.openapi.application.Application
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.project.stateStore
-import com.intellij.testFramework.common.ThreadLeakTracker
 import com.intellij.testFramework.junit5.RunInEdt
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.moduleFixture
@@ -50,14 +47,6 @@ class SdkImportServiceTest {
 
     private val jdkPath: String
         get() = System.getProperty("JDK_PATH")
-
-    private val app: Application
-        get() = ApplicationManager.getApplication()
-
-    @AfterEach
-    fun ignoreThreads() {
-        ThreadLeakTracker.longRunningThreadCreated(app, "SystemPropertyWatcher")
-    }
 
     @Disabled("Disabled due to -> https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/2070")
     @Test
