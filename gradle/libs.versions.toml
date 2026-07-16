@@ -8,7 +8,7 @@ mockito = "5.23.0"
 kotlin = "2.4.10" # https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
 changelog = "2.5.0" # https://github.com/JetBrains/gradle-changelog-plugin
 intelliJPlatform = "2.18.1" # https://github.com/JetBrains/intellij-platform-gradle-plugin
-pythonPlugin = "3.2.17" # https://github.com/PrzemyslawSwiderski/python-gradle-plugin
+pythonPlugin = "3.2.18" # https://github.com/PrzemyslawSwiderski/python-gradle-plugin
 
 [libraries]
 assertj = { group = "org.assertj", name = "assertj-core", version.ref = "assertj" }
