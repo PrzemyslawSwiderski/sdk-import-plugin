@@ -8,7 +8,8 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.project.stateStore
-import com.intellij.testFramework.junit5.RunInEdt
+import com.intellij.testFramework.junit5.RunMethodInEdt
+import com.intellij.testFramework.junit5.RunMethodInEdt.WriteIntentMode
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.moduleFixture
 import com.intellij.testFramework.junit5.fixture.projectFixture
@@ -22,7 +23,6 @@ import java.io.File
 private const val TEST_MODULE_NAME = "sample-python-module"
 
 @TestApplication
-@RunInEdt(writeIntent = true)
 class SdkImportServiceTest {
 
     private val projectModel = projectFixture()
@@ -48,6 +48,7 @@ class SdkImportServiceTest {
     private val jdkPath: String
         get() = System.getProperty("JDK_PATH")
 
+    @RunMethodInEdt(writeIntent = WriteIntentMode.True)
     @Disabled("Disabled due to -> https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/2070")
     @Test
     fun `new Python SDK is imported`() {
@@ -63,6 +64,7 @@ class SdkImportServiceTest {
         assertThat(module.pythonSdk?.name).isEqualTo("Python env: $pythonPath")
     }
 
+    @RunMethodInEdt(writeIntent = WriteIntentMode.True)
     @Test
     fun `new Java SDK is imported`() {
         // given
@@ -78,6 +80,7 @@ class SdkImportServiceTest {
         assertThat(allJdks.first().name).isEqualTo("JDK: $jdkPath")
     }
 
+    @RunMethodInEdt(writeIntent = WriteIntentMode.True)
     @Test
     fun `error notification if displayed`() {
         // given

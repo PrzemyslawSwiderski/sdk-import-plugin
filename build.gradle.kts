@@ -11,15 +11,15 @@ plugins {
     alias(libs.plugins.pythonPlugin) // Python Plugin (https://github.com/PrzemyslawSwiderski/python-gradle-plugin)
 }
 
-val javaVersion: String by project
-val pluginGroup: String by project
-val pluginVersion: String by project
-val platformVersion: String by project
-val platformBundledPlugins: String by project
-val platformPlugins: String by project
-val pluginRepositoryUrl: String by project
-val pluginSinceBuild: String by project
-val pluginUntilBuild: String by project
+val javaVersion = project.property("javaVersion") as String
+val pluginGroup = project.property("pluginGroup") as String
+val pluginVersion = project.property("pluginVersion") as String
+val platformVersion = project.property("platformVersion") as String
+val platformBundledPlugins = project.property("platformBundledPlugins") as String
+val platformPlugins = project.property("platformPlugins") as String
+val pluginRepositoryUrl = project.property("pluginRepositoryUrl") as String
+val pluginSinceBuild = project.property("pluginSinceBuild") as String
+val pluginUntilBuild = project.property("pluginUntilBuild") as String
 
 group = pluginGroup
 version = pluginVersion
