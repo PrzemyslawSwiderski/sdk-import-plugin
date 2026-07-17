@@ -1,7 +1,8 @@
 package com.pswidersk.sdkimportplugin
 
 import com.intellij.openapi.project.Project
-import com.intellij.testFramework.junit5.RunInEdt
+import com.intellij.testFramework.junit5.RunMethodInEdt
+import com.intellij.testFramework.junit5.RunMethodInEdt.WriteIntentMode
 import com.intellij.testFramework.junit5.TestApplication
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.params.ParameterizedTest
@@ -10,9 +11,9 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
 @TestApplication
-@RunInEdt(writeIntent = true)
 class LoadSdkFileTest {
 
+    @RunMethodInEdt(writeIntent = WriteIntentMode.True)
     @CsvSource(
         "/opt/projBasePath/,/opt/projBasePath/test-sdk-dir/python",
         "/opt/projBasePath//,/opt/projBasePath/test-sdk-dir/python",

@@ -4,20 +4,21 @@ import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.vfs.readText
-import com.intellij.testFramework.junit5.RunInEdt
+import com.intellij.testFramework.junit5.RunMethodInEdt
+import com.intellij.testFramework.junit5.RunMethodInEdt.WriteIntentMode
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.projectFixture
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 @TestApplication
-@RunInEdt(writeIntent = true)
 class GradleNewProjectWizardTest {
 
     private val projectModel = projectFixture()
     private val project: Project
         get() = projectModel.get()
 
+    @RunMethodInEdt(writeIntent = WriteIntentMode.True)
     @Test
     fun `new Gradle Python project is created`() {
         // given
