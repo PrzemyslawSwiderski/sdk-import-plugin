@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Added
+
+### Changed
+
+### Removed
+
+## [1.9.1] - 2026-08-12
+
 ### Changed
 
 - Fixed Gradle reimport IDE action.
@@ -89,7 +97,9 @@
 - Java SDK definition support,
 - Using Snake YAML instead of Jackson for the sake of backward compatibility.
 
-[Unreleased]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.8.1...HEAD
+[Unreleased]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.9.1...HEAD
+[1.9.1]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.9.0...v1.9.1
+[1.9.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.7.0...v1.8.1
 [1.7.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.5.0...v1.6.0
