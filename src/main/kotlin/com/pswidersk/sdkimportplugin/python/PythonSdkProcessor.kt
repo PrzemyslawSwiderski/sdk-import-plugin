@@ -7,7 +7,6 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.python.venv.createVenvAdditionalData
-import com.jetbrains.python.sdk.PythonSdkAdditionalData
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.pythonSdk
 import com.pswidersk.sdkimportplugin.*
@@ -26,7 +25,7 @@ class PythonSdkProcessor : SdkProcessor {
         val pythonSdkName = "Python env: ${sdkConfig.path}"
         val tableSdk = sdkTable.findJdk(pythonSdkName)
         val sdk = if (tableSdk != null) tableSdk else {
-            val additionalData = createVenvAdditionalData()
+            val additionalData = createVenvAdditionalData(sdkHome.toNioPath().parent)
             val pythonSdk = SdkConfigurationUtil.setupSdk(
                 emptyArray(), sdkHome, PythonSdkType.getInstance(), true, additionalData, pythonSdkName
             )!!
