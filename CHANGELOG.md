@@ -4,11 +4,15 @@
 
 ## [Unreleased]
 
-### Added
-
 ### Changed
 
-### Removed
+- Fixed Gradle reimport IDE action.
+
+## [1.9.0] - 2026-03-29
+
+### Added
+
+- `2026.2` platform support.
 
 ## [1.8.1] - 2026-03-29
 
