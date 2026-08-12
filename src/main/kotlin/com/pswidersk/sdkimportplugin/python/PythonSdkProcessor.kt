@@ -1,40 +1,53 @@
 package com.pswidersk.sdkimportplugin.python
 
+import com.intellij.openapi.application.edtWriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ModuleRootModificationUtil
-import com.intellij.python.venv.createVenvAdditionalData
-import com.jetbrains.python.sdk.PythonSdkType
+import com.jetbrains.python.projectCreation.createVenvAndSdk
+import com.jetbrains.python.sdk.ModuleOrProject
 import com.jetbrains.python.sdk.pythonSdk
 import com.pswidersk.sdkimportplugin.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-class PythonSdkProcessor : SdkProcessor {
+class PythonSdkProcessor(private val cs: CoroutineScope) : SdkProcessor {
 
     override fun applySdk(project: Project, sdkConfig: SdkImportConfigEntry) {
         if (sdkConfig.type == PYTHON_SDK_TYPE) {
-            addPythonSdk(project, sdkConfig)
+            cs.launch {
+                addPythonSdk(project, sdkConfig)
+            }
         }
     }
 
-    private fun addPythonSdk(project: Project, sdkConfig: SdkImportConfigEntry) {
+    private suspend fun addPythonSdk(project: Project, sdkConfig: SdkImportConfigEntry) {
         val sdkHome = sdkConfig.loadSdkFile(project)
         val sdkTable = ProjectJdkTable.getInstance()
         val pythonSdkName = "Python env: ${sdkConfig.path}"
         val tableSdk = sdkTable.findJdk(pythonSdkName)
-        val sdk = if (tableSdk != null) tableSdk else {
-            val additionalData = createVenvAdditionalData(sdkHome.toNioPath().parent)
-            val pythonSdk = SdkConfigurationUtil.setupSdk(
-                emptyArray(), sdkHome, PythonSdkType.getInstance(), true, additionalData, pythonSdkName
-            )!!
-            withWriteAction {
-                sdkTable.addJdk(pythonSdk)
+
+        val sdk: Sdk = tableSdk ?: run {
+            val moduleOrProject: ModuleOrProject = ModuleOrProject.ProjectOnly(project)
+
+            val result = createVenvAndSdk(
+                moduleOrProject = moduleOrProject,
+                explicitPath = sdkHome,
+            )
+
+            val newSdk = result.orThrow {
+                IllegalStateException(it.message)
+            }
+
+            edtWriteAction {
+                sdkTable.addJdk(newSdk)
             }
             newPythonSdkNotif(project, pythonSdkName)
-            pythonSdk
+            newSdk
         }
+
         project.withModule(sdkConfig.module) {
             setModuleSdk(it, sdk)
         }
@@ -46,5 +59,4 @@ class PythonSdkProcessor : SdkProcessor {
             changedModulePythonSdkNotif(module, sdk.name)
         }
     }
-
 }

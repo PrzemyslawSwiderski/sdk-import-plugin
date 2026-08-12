@@ -15,8 +15,7 @@ class RefreshListener(private val cs: CoroutineScope) : ExternalSystemTaskNotifi
     @Override
     override fun onSuccess(projectPath: String, id: ExternalSystemTaskId) {
         if (id.type == RESOLVE_PROJECT) {
-            val project = id.findProject()
-            if (project == null) return
+            val project = id.findProject() ?: return
 
             cs.launch {
                 withBackgroundProgress(project, "Reimporting SDKs ...") {
