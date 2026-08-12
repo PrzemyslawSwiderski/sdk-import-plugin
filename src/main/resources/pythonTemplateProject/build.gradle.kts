@@ -1,7 +1,7 @@
 import com.pswidersk.gradle.python.VenvTask
 
 plugins {
-    id("com.pswidersk.python-plugin") version "3.2.21"
+    id("com.pswidersk.python-plugin") version "3.2.22"
 }
 
 pythonPlugin {
@@ -11,16 +11,19 @@ pythonPlugin {
 tasks {
 
     register<VenvTask>("condaInfo") {
+        description = "List information about Conda"
         venvExec = "conda"
         args = listOf("info")
     }
 
-    val condaInstall by registering(VenvTask::class) {
+    val condaInstall = register<VenvTask>("condaInstall") {
+        description = "Install Conda"
         venvExec = "conda"
         args = listOf("install", "--file", "requirements.txt", "-y")
     }
 
     register<VenvTask>("runScript") {
+        description = "Run Python script"
         args = listOf("script.py")
         dependsOn(condaInstall)
     }
