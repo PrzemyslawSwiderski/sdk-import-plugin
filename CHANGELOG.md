@@ -8,6 +8,8 @@
 
 ### Changed
 
+- Fixed Python SDK registration and project assignment on the `2026.2` platform.
+
 ### Removed
 
 ## [1.9.1] - 2026-08-12

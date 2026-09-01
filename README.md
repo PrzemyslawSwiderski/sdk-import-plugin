@@ -24,6 +24,9 @@ import:
   - module: "python-data-science-samples.jupyter-notebook"
     path: "C:/PYTHON/Miniconda3-py312_24.1.2-0/envs/python-3.9.1/python.exe"
     type: "PYTHON"
+  - module: "project-with-local-venv"
+    path: "$PROJECT_DIR$"
+    type: "PYTHON"
   - module: "python-data-science-samples.java-samples"
     path: "C:\\JAVA\\.gradle\\jdks\\adoptium-18-x64-hotspot-windows"
     type: "JAVA"
@@ -34,9 +37,11 @@ import:
 
 Where:
 
-* `module` should match the Intellij's module name. Nested modules are separated with `.`. For the module name matching
-  project name SDK will be also added to the Project,
-* `path` is the location of SDK on files system,
+* `module` should match the Intellij's module name. Nested modules are separated with `.`. A Java SDK is also assigned
+  to the project when the module name matches the project name. A Python SDK is also assigned to the project when the
+  selected module has the project base directory as one of its content roots,
+* `path` is the location of SDK on files system. For Python, it may point to the interpreter executable,
+  the virtual environment directory, or a project directory containing a `.venv` virtual environment,
 * `type` should be one of the supported SDKs enumerate values,
 * `$PROJECT_DIR$` is a main project base directory which will be translated into a full proper path,
 
