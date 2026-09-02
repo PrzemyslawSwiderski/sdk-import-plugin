@@ -8,9 +8,13 @@
 
 ### Changed
 
-- Fixed Python SDK registration and project assignment on the `2026.2` platform.
-
 ### Removed
+
+## [1.9.2] - 2026-09-02
+
+### Changed
+
+- Fixed Python SDK registration and project assignment on the `2026.2` platform.
 
 ## [1.9.1] - 2026-08-12
 
@@ -99,7 +103,8 @@
 - Java SDK definition support,
 - Using Snake YAML instead of Jackson for the sake of backward compatibility.
 
-[Unreleased]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.9.1...HEAD
+[Unreleased]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.9.2...HEAD
+[1.9.2]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.9.1...v1.9.2
 [1.9.1]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.8.1...v1.9.0
 [1.8.1]: https://github.com/PrzemyslawSwiderski/sdk-import-plugin/compare/v1.7.0...v1.8.1
