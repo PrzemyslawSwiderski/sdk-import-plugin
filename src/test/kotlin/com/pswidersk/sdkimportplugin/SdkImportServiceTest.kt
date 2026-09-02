@@ -2,21 +2,32 @@ package com.pswidersk.sdkimportplugin
 
 import com.intellij.notification.Notification
 import com.intellij.notification.impl.NotificationsManagerImpl
+import com.intellij.openapi.application.edtWriteAction
+import com.intellij.openapi.application.readAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.roots.ModuleRootModificationUtil
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.project.stateStore
 import com.intellij.testFramework.junit5.RunMethodInEdt
 import com.intellij.testFramework.junit5.RunMethodInEdt.WriteIntentMode
 import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.moduleFixture
 import com.intellij.testFramework.junit5.fixture.projectFixture
+import com.intellij.testFramework.junit5.fixture.tempPathFixture
+import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.pythonSdk
+import com.pswidersk.sdkimportplugin.python.PythonSdkProcessor
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -25,13 +36,19 @@ private const val TEST_MODULE_NAME = "sample-python-module"
 @TestApplication
 class SdkImportServiceTest {
 
-    private val projectModel = projectFixture()
+    private val projectPathModel = tempPathFixture()
+    private val projectModel = projectFixture(projectPathModel)
     private val project: Project
         get() = projectModel.get()
 
     private val moduleModel = projectModel.moduleFixture(TEST_MODULE_NAME)
     private val module: Module
         get() = moduleModel.get()
+
+    private val nonProjectModulePathModel = tempPathFixture()
+    private val projectRootModuleModel = projectModel.moduleFixture(nonProjectModulePathModel, addPathToSourceRoot = true)
+    private val projectRootModule: Module
+        get() = projectRootModuleModel.get()
 
     private val ideaDir: File
         get() = project.stateStore.directoryStorePath!!.toFile().also { it.mkdir() }
@@ -48,20 +65,40 @@ class SdkImportServiceTest {
     private val jdkPath: String
         get() = System.getProperty("JDK_PATH")
 
-    @RunMethodInEdt(writeIntent = WriteIntentMode.True)
-    @Disabled("Disabled due to -> https://github.com/JetBrains/intellij-platform-gradle-plugin/issues/2070")
     @Test
-    fun `new Python SDK is imported`() {
-        // given
-        mockPythonSdk()
-        val projectService = project.service<SdkImportService>()
+    fun `existing Python SDK is registered once and assigned`() {
+        runBlocking {
+            val sdkConfig = SdkImportConfigEntry().apply {
+                type = PYTHON_SDK_TYPE
+                path = pythonPath
+                module = TEST_MODULE_NAME
+            }
+            val processor = PythonSdkProcessor(this)
+            edtWriteAction {
+                ModuleRootModificationUtil.addContentRoot(projectRootModule, projectPathModel.get().toString())
+            }
+            val contentRootPaths = readAction {
+                ModuleRootManager.getInstance(projectRootModule).contentRoots.map { it.toNioPath() }
+            }
+            assertThat(contentRootPaths).containsExactly(nonProjectModulePathModel.get(), projectPathModel.get())
 
-        // when
-        projectService.runImport()
+            coroutineScope {
+                listOf(module, projectRootModule).map { targetModule ->
+                    async { processor.addPythonSdk(project, targetModule, sdkConfig) }
+                }.awaitAll()
+            }
 
-        // then
-        assertThat(ProjectJdkTable.getInstance().allJdks).hasSize(1)
-        assertThat(module.pythonSdk?.name).isEqualTo("Python env: $pythonPath")
+            val registeredSdk = ProjectJdkTable.getInstance().allJdks.single()
+            assertThat(registeredSdk.homePath).isEqualTo(pythonPath)
+            assertThat(registeredSdk.sdkType).isSameAs(PythonSdkType.getInstance())
+            assertThat(module.pythonSdk).isSameAs(registeredSdk)
+            assertThat(projectRootModule.pythonSdk).isSameAs(registeredSdk)
+            assertThat(ProjectRootManager.getInstance(project).projectSdk).isSameAs(registeredSdk)
+
+            processor.addPythonSdk(project, projectRootModule, sdkConfig)
+
+            assertThat(ProjectJdkTable.getInstance().allJdks).containsExactly(registeredSdk)
+        }
     }
 
     @RunMethodInEdt(writeIntent = WriteIntentMode.True)
@@ -125,19 +162,6 @@ class SdkImportServiceTest {
         return testSdkImportConfig.import.first().path
     }
 
-    private fun mockPythonSdk() {
-        runWriteAction {
-            sdkImportFile.writeText(
-                """
-                import:
-                  - type: PYTHON
-                    path: $pythonPath
-                    module: $TEST_MODULE_NAME
-                """.trimIndent()
-            )
-        }
-    }
-
     private fun mockJdk() {
         runWriteAction {
             sdkImportFile.writeText(
@@ -160,4 +184,3 @@ class SdkImportServiceTest {
         }
     }
 }
-
