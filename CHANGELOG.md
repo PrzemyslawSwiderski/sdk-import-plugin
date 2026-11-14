@@ -10,6 +10,12 @@
 
 ### Removed
 
+## [1.10.0] - 2026-11-14
+
+### Changed
+
+- `2026.3` platform support.
+
 ## [1.9.2] - 2026-09-02
 
 ### Changed
