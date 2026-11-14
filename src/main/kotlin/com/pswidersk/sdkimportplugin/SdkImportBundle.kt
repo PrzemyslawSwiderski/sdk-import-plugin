@@ -7,10 +7,12 @@ import org.jetbrains.annotations.PropertyKey
 @NonNls
 private const val BUNDLE = "messages.SdkImportBundle"
 
-object SdkImportBundle : DynamicBundle(BUNDLE) {
+object SdkImportBundle {
+
+    private val INSTANCE = DynamicBundle(SdkImportBundle::class.java, BUNDLE)
 
     @JvmStatic
-    fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any) =
-        getMessage(key, *params)
+    fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String =
+        INSTANCE.getMessage(key, *params)
 
 }
