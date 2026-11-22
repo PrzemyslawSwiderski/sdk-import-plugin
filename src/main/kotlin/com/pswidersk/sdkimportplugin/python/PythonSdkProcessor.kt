@@ -1,90 +1,68 @@
 package com.pswidersk.sdkimportplugin.python
 
-import com.intellij.openapi.application.EDT
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.edtWriteAction
-import com.intellij.openapi.application.readAction
-import com.intellij.openapi.application.writeAction
+import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
-import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.pythonSdk
 import com.pswidersk.sdkimportplugin.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 import org.jdom.Element
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
 
-private val pythonSdkRegistrationMutex = Mutex()
-
-class PythonSdkProcessor(private val cs: CoroutineScope) : SdkProcessor {
+class PythonSdkProcessor : SdkProcessor {
 
     override fun applySdk(project: Project, sdkConfig: SdkImportConfigEntry) {
         if (sdkConfig.type == PYTHON_SDK_TYPE) {
             project.withModule(sdkConfig.module) { module ->
-                cs.launch {
-                    try {
-                        addPythonSdk(project, module, sdkConfig)
-                    } catch (exception: CancellationException) {
-                        throw exception
-                    } catch (exception: Exception) {
-                        errorNotif(project, exception)
-                    }
+                try {
+                    addPythonSdk(project, module, sdkConfig)
+                } catch (exception: Exception) {
+                    errorNotif(project, exception)
                 }
             }
         }
     }
 
-    internal suspend fun addPythonSdk(project: Project, module: Module, sdkConfig: SdkImportConfigEntry) {
+    internal fun addPythonSdk(project: Project, module: Module, sdkConfig: SdkImportConfigEntry) {
         val configuredPath = sdkConfig.loadSdkFile(project).toNioPath()
         val pythonSdkName = "Python env: $configuredPath"
         val pythonExecutable = resolvePythonExecutable(configuredPath)
-        val sdkHome = writeAction {
-            LocalFileSystem.getInstance().refreshAndFindFileByNioFile(pythonExecutable)
-        } ?: throw IllegalArgumentException("Python executable can not be loaded: `$pythonExecutable`")
-        val (sdk, created) = pythonSdkRegistrationMutex.withLock {
-            withContext(Dispatchers.EDT) {
-                val sdkTable = ProjectJdkTable.getInstance()
-                val pythonSdkType = PythonSdkType.getInstance()
-                val registeredSdk = findRegisteredPythonSdk(
-                    pythonExecutable,
-                    sdkTable.allJdks.filter { it.sdkType == pythonSdkType },
-                )
 
-                registeredSdk?.let { it to false } ?: run {
-                    val newSdk = SdkConfigurationUtil.createSdk(
-                        sdkTable.allJdks.asList(),
-                        sdkHome,
-                        pythonSdkType,
-                        null,
-                        pythonSdkName,
-                    )
-                    val additionalData = pythonSdkType.loadAdditionalData(newSdk, Element("additional"))
-                    ApplicationManager.getApplication().runWriteAction {
-                        newSdk.sdkModificator.apply {
-                            sdkAdditionalData = additionalData
-                            commitChanges()
-                        }
-                    }
-                    pythonSdkType.setupSdkPaths(newSdk)
-                    SdkConfigurationUtil.addSdk(newSdk)
-                    newSdk to true
+        val (sdk, created) = WriteAction.computeAndWait<Pair<Sdk, Boolean>, RuntimeException> {
+            val sdkHome = LocalFileSystem.getInstance().refreshAndFindFileByNioFile(pythonExecutable)
+                ?: throw IllegalArgumentException("Python executable can not be loaded: `$pythonExecutable`")
+            val sdkTable = ProjectJdkTable.getInstance()
+            val pythonSdkType = PythonSdkType.getInstance()
+
+            findRegisteredPythonSdk(
+                pythonExecutable,
+                sdkTable.allJdks.filter { it.sdkType == pythonSdkType },
+            )?.let { it to false } ?: run {
+                val newSdk = SdkConfigurationUtil.createSdk(
+                    sdkTable.allJdks.asList(),
+                    sdkHome,
+                    pythonSdkType,
+                    null,
+                    pythonSdkName,
+                )
+                newSdk.sdkModificator.apply {
+                    sdkAdditionalData = pythonSdkType.loadAdditionalData(newSdk, Element("additional"))
+                    commitChanges()
                 }
+                pythonSdkType.setupSdkPaths(newSdk)
+                SdkConfigurationUtil.addSdk(newSdk)
+                newSdk to true
             }
         }
 
@@ -94,8 +72,9 @@ class PythonSdkProcessor(private val cs: CoroutineScope) : SdkProcessor {
         setModuleSdk(project, module, sdk)
     }
 
-    private suspend fun setModuleSdk(project: Project, module: Module, sdk: Sdk) {
-        val (moduleSdkChanged, projectSdkChanged) = readAction {
+
+    private fun setModuleSdk(project: Project, module: Module, sdk: Sdk) {
+        val (moduleSdkChanged, projectSdkChanged) = ReadAction.computeBlocking<Pair<Boolean, Boolean>, RuntimeException> {
             val moduleSdkChanged = module.pythonSdk != sdk
             val isProjectRootModule = project.basePath?.let { projectBasePath ->
                 ModuleRootManager.getInstance(module).contentRoots.any {
@@ -105,7 +84,8 @@ class PythonSdkProcessor(private val cs: CoroutineScope) : SdkProcessor {
             val projectSdkChanged = isProjectRootModule && project.pythonSdk != sdk
             moduleSdkChanged to projectSdkChanged
         }
-        edtWriteAction {
+
+        WriteAction.runAndWait<RuntimeException> {
             if (moduleSdkChanged) {
                 ModuleRootModificationUtil.setModuleSdk(module, sdk)
             }

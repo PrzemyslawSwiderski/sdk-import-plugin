@@ -9,9 +9,10 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
-import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.platform.eel.provider.LocalEelMachine
 import com.intellij.project.stateStore
 import com.intellij.testFramework.junit5.RunMethodInEdt
 import com.intellij.testFramework.junit5.RunMethodInEdt.WriteIntentMode
@@ -19,6 +20,7 @@ import com.intellij.testFramework.junit5.TestApplication
 import com.intellij.testFramework.junit5.fixture.moduleFixture
 import com.intellij.testFramework.junit5.fixture.projectFixture
 import com.intellij.testFramework.junit5.fixture.tempPathFixture
+import com.intellij.workspaceModel.ide.legacyBridge.GlobalLibraryTableBridge
 import com.jetbrains.python.sdk.PythonSdkType
 import com.jetbrains.python.sdk.pythonSdk
 import com.pswidersk.sdkimportplugin.python.PythonSdkProcessor
@@ -46,7 +48,8 @@ class SdkImportServiceTest {
         get() = moduleModel.get()
 
     private val nonProjectModulePathModel = tempPathFixture()
-    private val projectRootModuleModel = projectModel.moduleFixture(nonProjectModulePathModel, addPathToSourceRoot = true)
+    private val projectRootModuleModel =
+        projectModel.moduleFixture(nonProjectModulePathModel, addPathToSourceRoot = true)
     private val projectRootModule: Module
         get() = projectRootModuleModel.get()
 
@@ -73,7 +76,7 @@ class SdkImportServiceTest {
                 path = pythonPath
                 module = TEST_MODULE_NAME
             }
-            val processor = PythonSdkProcessor(this)
+            val processor = PythonSdkProcessor()
             edtWriteAction {
                 ModuleRootModificationUtil.addContentRoot(projectRootModule, projectPathModel.get().toString())
             }
@@ -99,6 +102,21 @@ class SdkImportServiceTest {
 
             assertThat(ProjectJdkTable.getInstance().allJdks).containsExactly(registeredSdk)
         }
+    }
+
+    @Test
+    fun `new Python SDK is imported`() {
+        // given
+        mockPythonEnv()
+        val projectService = project.service<SdkImportService>()
+
+        // when
+        projectService.runImport()
+
+        // then
+        val allJdks = ProjectJdkTable.getInstance().allJdks
+        assertThat(allJdks).hasSize(1)
+        assertThat(allJdks.first().name).isEqualTo("Python env: $pythonPath")
     }
 
     @RunMethodInEdt(writeIntent = WriteIntentMode.True)
@@ -162,6 +180,19 @@ class SdkImportServiceTest {
         return testSdkImportConfig.import.first().path
     }
 
+    private fun mockPythonEnv() {
+        runWriteAction {
+            sdkImportFile.writeText(
+                """
+                import:
+                  - type: PYTHON
+                    path: $pythonPath
+                    module: $TEST_MODULE_NAME
+                """.trimIndent()
+            )
+        }
+    }
+
     private fun mockJdk() {
         runWriteAction {
             sdkImportFile.writeText(
@@ -177,9 +208,22 @@ class SdkImportServiceTest {
 
     private fun clearSdks() {
         val sdkTable = ProjectJdkTable.getInstance()
-        sdkTable.allJdks.forEach {
-            runWriteAction {
-                ProjectJdkTable.getInstance().removeJdk(it)
+        val allJdks = sdkTable.allJdks.toList()
+
+        runWriteAction {
+            allJdks.forEach { sdk ->
+                sdkTable.removeJdk(sdk)
+            }
+        }
+
+        // Additionally, clean up global libraries that may have been created
+        // by Python SDK setup and are now orphaned
+        val globalTable = GlobalLibraryTableBridge.getInstance(LocalEelMachine)
+        runWriteAction {
+            globalTable.libraries.toList().forEach { library ->
+                if (library.name!!.contains("Python", ignoreCase = true)) {
+                    globalTable.removeLibrary(library)
+                }
             }
         }
     }
